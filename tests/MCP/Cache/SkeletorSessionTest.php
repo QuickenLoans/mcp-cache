@@ -7,6 +7,7 @@
 
 namespace MCP\Cache;
 
+use Mockery;
 use PHPUnit_Framework_TestCase;
 
 class SkeletorSessionTest extends PHPUnit_Framework_TestCase
@@ -15,14 +16,20 @@ class SkeletorSessionTest extends PHPUnit_Framework_TestCase
     {
         $inputValue = 'whatever';
         $inputKey = 'key-name';
-        $mockSession = $this->mockSkeletorSession($inputValue);
-        $mockSession->expects($this->once())
-                    ->method('set')
-                    ->with($this->equalTo($inputKey), $this->equalTo($inputValue))
-                    ->will($this->returnValue(true));
+
+        $session = Mockery::mock('Sk\Session');
+        $session
+            ->shouldReceive('get')
+            ->once()
+            ->andReturn($inputValue);
+        $session
+            ->shouldReceive('set')
+            ->once()
+            ->with($inputKey, $inputValue)
+            ->andReturn($inputValue);
 
         $expected = $inputValue;
-        $cacher = new SkeletorSession($mockSession);
+        $cacher = new SkeletorSession($session);
         $cacher->set($inputKey, $inputValue);
         $actual = $cacher->get($inputKey);
         $this->assertSame($expected, $actual);
@@ -31,20 +38,19 @@ class SkeletorSessionTest extends PHPUnit_Framework_TestCase
     public function testSkeletorSessionCacheGettingKeyThatWasNotSetReturnsNull()
     {
         $inputKey = 'key-name';
-
         $expected = null;
-        $cacher = new SkeletorSession($this->mockSkeletorSession(null));
+
+        $session = Mockery::mock('Sk\Session');
+        $session
+            ->shouldReceive('get')
+            ->once()
+            ->andReturnNull();
+        $session
+            ->shouldReceive('set')
+            ->never();
+
+        $cacher = new SkeletorSession($session);
         $actual = $cacher->get($inputKey);
         $this->assertSame($expected, $actual);
-    }
-
-    public function mockSkeletorSession($return)
-    {
-        $mock = $this->getMock('Sk\Session', array('get', 'set'));
-        $mock->expects($this->any())
-             ->method('get')
-             ->will($this->returnValue($return));
-
-        return $mock;
     }
 }
