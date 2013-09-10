@@ -1,0 +1,14 @@
+# miscellaneous
+phpunit.xml
+phpmd.xml
+
+# ide specific configuration
+*.swo
+*.swp
+
+# build directory
+/build/
+
+# package installation
+composer.lock
+/vendor/
