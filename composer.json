@@ -15,8 +15,7 @@
     },
     "autoload": {
         "psr-0": {
-            "MCP\\Cache\\": "src",
-            "MCP\\Testing\\": "src"
+            "MCP\\Cache\\": "src"
         }
     },
     "config": {
