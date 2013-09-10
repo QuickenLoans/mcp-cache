@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+    <phpunit
+        backupGlobals="false"
+        backupStaticAttributes="false"
+        bootstrap=""
+        cacheTokens="false"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        forceCoversAnnotation="true"
+        mapTestClassNameToCoveredClassName="true"
+        printerClass="PHPUnit_TextUI_ResultPrinter"
+        processIsolation="false"
+        stopOnError="false"
+        stopOnFailure="false"
+        stopOnIncomplete="false"
+        stopOnSkipped="false"
+        strict="true"
+        timeoutForSmallTests="5"
+        verbose="true">
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory>src/</directory>
+        </whitelist>
+    </filter>
+
+    <listeners>
+        <listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
+    </listeners>
+
+    <logging>
+    <!--
+        <log type="coverage-html" target="build/php-code-coverage" charset="UTF-8" highlight="true" lowUpperBound="98" highLowerBound="99" />
+    -->
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
+    </logging>
+
+    <php>
+        <ini name="display_errors" value="On" />
+        <ini name="error_reporting" value="32767" />
+        <ini name="memory_limit" value="1G" />
+    </php>
+
+    <testsuites>
+        <testsuite name="MCP Cache">
+            <directory>tests/MCP</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

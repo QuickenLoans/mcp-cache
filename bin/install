@@ -1,0 +1,9 @@
+#!/bin/bash
+export COMPOSER_HOME=~/.composer
+DIR=$( cd "$( dirname "$0" )" && pwd )
+
+composer \
+install \
+--prefer-dist \
+--working-dir $DIR/../ \
+--dev

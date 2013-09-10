@@ -1,0 +1,52 @@
+{
+    "name": "ql/mcp-cache",
+    "description": "Caching standard for mcp services",
+    "homepage": "http://git/skluck/mcp-cache",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Steve Kluck",
+            "email": "stevekluck@quickenloans.com"
+        }
+    ],
+
+    "archive": {
+        "exclude": ["/bin", "/phpmd.xml.dist", "/phpunit.xml.dist", "/tests"]
+    },
+    "autoload": {
+        "psr-0": {
+            "MCP\\Cache\\": "src",
+            "MCP\\Testing\\": "src"
+        }
+    },
+    "config": {
+        "preferred-install": "dist"
+    },
+    "conflict": {
+        "ql/mcp": "*"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://composer/"
+        }
+    ],
+    "require": {
+        "ql/mcp-core": "*"
+    },
+    "require-dev": {
+        "mockery/mockery": "*",
+        "phpmd/phpmd": "*",
+        "phpunit/phpunit": "*",
+        "phpunit/php-invoker": "*",
+        "squizlabs/php_codesniffer": "*"
+    },
+    "suggest": {
+        "ql/skeletor": "Required if using Skeletor session cache."
+    }
+}

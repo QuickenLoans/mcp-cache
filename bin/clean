@@ -1,0 +1,20 @@
+#!/bin/bash
+DIR=$( cd "$( dirname "$0" )" && pwd )
+DELFILES=(
+    "composer.lock"
+)
+
+DELFOLDERS=(
+    "build"
+    "vendor"
+)
+
+for i in ${DELFILES[@]}
+do
+    rm -f $DIR/../$i
+done
+
+for i in ${DELFOLDERS[@]}
+do
+    rm -rf $DIR/../$i
+done
