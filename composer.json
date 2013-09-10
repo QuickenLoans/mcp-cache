@@ -36,7 +36,7 @@
         }
     ],
     "require": {
-        "ql/mcp-core": "*"
+        "ql/mcp-core": ">=1"
     },
     "require-dev": {
         "mockery/mockery": "*",
