@@ -14,7 +14,13 @@ use Sk\Session;
  */
 class SkeletorSession implements CacheInterface
 {
+    use KeySaltingTrait;
     use ValidationTrait;
+
+    /**
+     * @var string
+     */
+    const PREFIX = 'mcp-cache';
 
     /**
      * @var Session
@@ -22,11 +28,22 @@ class SkeletorSession implements CacheInterface
     private $session;
 
     /**
-     * @param Session $session
+     * @var string|null
      */
-    public function __construct(Session $session)
+    private $suffix;
+
+    /**
+     * An optional suffix can be provided which will be appended to the key
+     * used to store and retrieve data. This can be used to throw away cached
+     * data with a code push or other configuration change.
+     *
+     * @param Session $session
+     * @param string|null $suffix
+     */
+    public function __construct(Session $session, $suffix = null)
     {
         $this->session = $session;
+        $this->suffix = $suffix;
     }
 
     /**
@@ -34,6 +51,8 @@ class SkeletorSession implements CacheInterface
      */
     public function get($key)
     {
+        $key = $this->salted($key, $this->suffix);
+
         $data = $this->session->get($key);
         if (!isset($data)) {
             return null;
@@ -48,6 +67,7 @@ class SkeletorSession implements CacheInterface
     public function set($key, $value, $ttl = 0)
     {
         $this->validateCacheability($value);
+        $key = $this->salted($key, $this->suffix);
 
         $this->session->set($key, $value);
         return true;

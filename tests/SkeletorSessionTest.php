@@ -28,7 +28,7 @@ class SkeletorSessionTest extends PHPUnit_Framework_TestCase
             ->andReturn($inputValue);
         $this->session
             ->shouldReceive('set')
-            ->with('key-name', $inputValue)
+            ->with('mcp-cache-key-name', $inputValue)
             ->andReturn($inputValue);
 
         $expected = $inputValue;
@@ -62,5 +62,19 @@ class SkeletorSessionTest extends PHPUnit_Framework_TestCase
     {
         $cache = new SkeletorSession($this->session);
         $actual = $cache->set('key', fopen('php://stdout', 'w'));
+    }
+
+    public function testCacheKeyIsBuiltCorrectlyWhenSuffixed()
+    {
+        $this->session
+            ->shouldReceive('get')
+            ->with('mcp-cache-KEY-suffix');
+        $this->session
+            ->shouldReceive('set')
+            ->with('mcp-cache-KEY-suffix', Mockery::any());
+
+        $cache = new SkeletorSession($this->session, 'suffix');
+        $cache->get('KEY');
+        $this->assertTrue($cache->set('KEY', null));
     }
 }
