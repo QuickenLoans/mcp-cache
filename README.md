@@ -1,5 +1,4 @@
-MCP Cache
-=========
+# MCP Cache
 
 Caching standard for mcp services
 
@@ -11,7 +10,7 @@ Caching standard for mcp services
 
 ### Building
 
-    This library should be built with composer only
+A PSR-4 compatible autoloader is required to use this library. Composer is recommended.
 
 ### Installing
 
@@ -23,21 +22,6 @@ Wipe compiled files:
 
     bin/clean
 
-### Testing
-
-Run PHP Unit
+Run tests:
 
     vendor/bin/phpunit
-
-TDD:
-
-    bin/test <file>
-    bin/test --rapid <file>
-
-Run Code Sniffer (PSR2)
-
-    bin/sniff
-
-Run Mess Detector (Strict)
-
-    bin/md

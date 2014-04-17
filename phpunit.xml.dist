@@ -43,8 +43,8 @@
     </php>
 
     <testsuites>
-        <testsuite name="MCP Cache">
-            <directory>tests/MCP</directory>
+        <testsuite name="Unit Tests">
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>

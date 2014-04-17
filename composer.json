@@ -11,10 +11,10 @@
     ],
 
     "archive": {
-        "exclude": ["/bin", "/phpmd.xml.dist", "/phpunit.xml.dist", "/tests"]
+        "exclude": ["/bin", "/phpunit.xml.dist", "/tests"]
     },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "MCP\\Cache\\": "src"
         }
     },
@@ -40,12 +40,7 @@
     },
     "require-dev": {
         "mockery/mockery": "*",
-        "phpmd/phpmd": "*",
-        "phpunit/phpunit": "*",
-        "phpunit/php-invoker": "*",
-        "squizlabs/php_codesniffer": "*"
-    },
-    "suggest": {
-        "ql/skeletor": "Required if using Skeletor session cache."
+        "phpunit/phpunit": "3.7.*",
+        "phpunit/php-invoker": "*"
     }
 }
