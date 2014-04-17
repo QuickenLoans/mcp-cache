@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright ©2005—2013 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
@@ -13,21 +13,33 @@ class MemoryTest extends PHPUnit_Framework_TestCase
 {
     public function testSettingAKeyAndGetSameKeyResultsInOriginalValue()
     {
-        $inputValue = array('myval' => 1);
-        $inputKey = 'mykey';
+        $inputValue = ['myval' => 1];
         $expected = $inputValue;
-        $cacheObj = new Memory;
-        $cacheObj->set($inputKey, $inputValue);
-        $actual = $cacheObj->get($inputKey);
+
+        $cache = new Memory;
+        $cache->set('mykey', $inputValue);
+
+        $actual = $cache->get('mykey');
         $this->assertSame($expected, $actual);
     }
 
     public function testGettingKeyThatWasNotSetReturnsNullAndNoError()
     {
         $inputKey = 'key-with-no-value';
-        $expected = null;
-        $cacheObj = new Memory;
-        $actual = $cacheObj->get($inputKey);
-        $this->assertSame($expected, $actual);
+
+        $cache = new Memory;
+
+        $actual = $cache->get($inputKey);
+        $this->assertNull($actual);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Resources cannot be cached
+     */
+    public function testCachingResourceBlowsUp()
+    {
+        $cache = new Memory;
+        $actual = $cache->set('key', fopen('php://stdout', 'w'));
     }
 }

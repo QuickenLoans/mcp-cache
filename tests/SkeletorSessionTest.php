@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright ©2005—2013 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
@@ -12,45 +12,55 @@ use PHPUnit_Framework_TestCase;
 
 class SkeletorSessionTest extends PHPUnit_Framework_TestCase
 {
+    public $session;
+
+    public function setUp()
+    {
+        $this->session = Mockery::mock('Sk\Session');
+    }
+
     public function testSkeletorSessionCacheSettingAKeyAndGetSameKeyResultsInOriginalValue()
     {
         $inputValue = 'whatever';
-        $inputKey = 'key-name';
 
-        $session = Mockery::mock('Sk\Session');
-        $session
+        $this->session
             ->shouldReceive('get')
-            ->once()
             ->andReturn($inputValue);
-        $session
+        $this->session
             ->shouldReceive('set')
-            ->once()
-            ->with($inputKey, $inputValue)
+            ->with('key-name', $inputValue)
             ->andReturn($inputValue);
 
         $expected = $inputValue;
-        $cacher = new SkeletorSession($session);
-        $cacher->set($inputKey, $inputValue);
-        $actual = $cacher->get($inputKey);
+
+        $cache = new SkeletorSession($this->session);
+        $cache->set('key-name', $inputValue);
+
+        $actual = $cache->get('key-name');
         $this->assertSame($expected, $actual);
     }
 
     public function testSkeletorSessionCacheGettingKeyThatWasNotSetReturnsNull()
     {
-        $inputKey = 'key-name';
-        $expected = null;
-
-        $session = Mockery::mock('Sk\Session');
-        $session
+        $this->session
             ->shouldReceive('get')
-            ->once()
             ->andReturnNull();
-        $session
+        $this->session
             ->shouldReceive('set')
             ->never();
 
-        $cacher = new SkeletorSession($session);
-        $actual = $cacher->get($inputKey);
-        $this->assertSame($expected, $actual);
+        $cache = new SkeletorSession($this->session);
+        $actual = $cache->get('key');
+        $this->assertNull($actual);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Resources cannot be cached
+     */
+    public function testCachingResourceBlowsUp()
+    {
+        $cache = new SkeletorSession($this->session);
+        $actual = $cache->set('key', fopen('php://stdout', 'w'));
     }
 }

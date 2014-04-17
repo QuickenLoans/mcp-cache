@@ -7,7 +7,6 @@
 
 namespace MCP\Cache;
 
-use MCP\DataType\Time\TimePoint;
 use Sk\Session;
 
 /**
@@ -15,6 +14,8 @@ use Sk\Session;
  */
 class SkeletorSession implements CacheInterface
 {
+    use ValidationTrait;
+
     /**
      * @var Session
      */
@@ -29,8 +30,7 @@ class SkeletorSession implements CacheInterface
     }
 
     /**
-     * @param string $key
-     * @return mixed
+     * {@inheritdoc}
      */
     public function get($key)
     {
@@ -43,13 +43,12 @@ class SkeletorSession implements CacheInterface
     }
 
     /**
-     * @param string $key
-     * @param mixed $value
-     * @param TimePoint|null $expiration
-     * @return boolean
+     * {@inheritdoc}
      */
-    public function set($key, $value, TimePoint $expiration = null)
+    public function set($key, $value, $ttl = 0)
     {
+        $this->validateCacheability($value);
+
         $this->session->set($key, $value);
         return true;
     }

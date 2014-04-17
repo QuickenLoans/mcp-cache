@@ -14,14 +14,20 @@ use MCP\DataType\Time\TimePoint;
  */
 class Memory implements CacheInterface
 {
+    use ValidationTrait;
+
     /**
      * @var array
      */
-    private $cache = array();
+    private $cache;
+
+    public function __construct()
+    {
+        $this->cache = [];
+    }
 
     /**
-     * @param string $key
-     * @return mixed
+     * {@inheritdoc}
      */
     public function get($key)
     {
@@ -33,13 +39,14 @@ class Memory implements CacheInterface
     }
 
     /**
-     * @param string $key
-     * @param mixed $value
-     * @param TimePoint|null $expiration
-     * @return boolean
+     * $ttl is ignored. If your data is living that long in memory, you got issues.
+     *
+     * {@inheritdoc}
      */
-    public function set($key, $value, TimePoint $expiration = null)
+    public function set($key, $value, $ttl = 0)
     {
+        $this->validateCacheability($value);
+
         $this->cache[$key] = $value;
         return true;
     }

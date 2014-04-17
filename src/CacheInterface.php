@@ -7,8 +7,6 @@
 
 namespace MCP\Cache;
 
-use MCP\DataType\Time\TimePoint;
-
 /**
  * @api
  */
@@ -16,15 +14,17 @@ interface CacheInterface
 {
     /**
      * @param string $key
-     * @return mixed
+     * @return mixed|null
      */
     public function get($key);
 
     /**
+     * Returns true if the data was stored.
+     *
      * @param string $key
-     * @param string|array|object $value
-     * @param TimePoint|null $expiration
+     * @param mixed $value Anything not a resource
+     * @param int $ttl How long the data should live, in seconds
      * @return boolean
      */
-    public function set($key, $value, TimePoint $expiration = null);
+    public function set($key, $value, $ttl = 0);
 }
