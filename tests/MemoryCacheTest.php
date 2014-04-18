@@ -9,14 +9,14 @@ namespace MCP\Cache;
 
 use PHPUnit_Framework_TestCase;
 
-class MemoryTest extends PHPUnit_Framework_TestCase
+class MemoryCacheTest extends PHPUnit_Framework_TestCase
 {
     public function testSettingAKeyAndGetSameKeyResultsInOriginalValue()
     {
         $inputValue = ['myval' => 1];
         $expected = $inputValue;
 
-        $cache = new Memory;
+        $cache = new MemoryCache;
         $cache->set('mykey', $inputValue);
 
         $actual = $cache->get('mykey');
@@ -27,7 +27,7 @@ class MemoryTest extends PHPUnit_Framework_TestCase
     {
         $inputKey = 'key-with-no-value';
 
-        $cache = new Memory;
+        $cache = new MemoryCache;
 
         $actual = $cache->get($inputKey);
         $this->assertNull($actual);
@@ -39,7 +39,7 @@ class MemoryTest extends PHPUnit_Framework_TestCase
      */
     public function testCachingResourceBlowsUp()
     {
-        $cache = new Memory;
+        $cache = new MemoryCache;
         $actual = $cache->set('key', fopen('php://stdout', 'w'));
     }
 }

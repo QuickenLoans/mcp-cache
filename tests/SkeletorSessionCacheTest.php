@@ -12,7 +12,7 @@ use MCP\DataType\Time\TimePoint;
 use Mockery;
 use PHPUnit_Framework_TestCase;
 
-class SkeletorSessionTest extends PHPUnit_Framework_TestCase
+class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
 {
     public $session;
     public $clock;
@@ -33,7 +33,7 @@ class SkeletorSessionTest extends PHPUnit_Framework_TestCase
                 return true;
             }));
 
-        $cache = new SkeletorSession($this->session, $this->clock);
+        $cache = new SkeletorSessionCache($this->session, $this->clock);
         $cache->set('key-name', 'whatever');
 
         $this->assertInstanceOf('MCP\Cache\Item\Item', $item);
@@ -49,7 +49,7 @@ class SkeletorSessionTest extends PHPUnit_Framework_TestCase
                 return true;
             }));
 
-        $cache = new SkeletorSession($this->session, $this->clock);
+        $cache = new SkeletorSessionCache($this->session, $this->clock);
         $cache->set('key-name', 'whatever', 127);
 
         // data returned if no timepoint provided to check expiry
@@ -66,7 +66,7 @@ class SkeletorSessionTest extends PHPUnit_Framework_TestCase
         $this->assertNull($item->data(new TimePoint(2014, 4, 1, 12, 2, 8, 'UTC')));
     }
 
-    public function testSkeletorSessionCacheGettingKeyThatWasNotSetReturnsNull()
+    public function testSkeletorSessionCacheCacheGettingKeyThatWasNotSetReturnsNull()
     {
         $this->session
             ->shouldReceive('get')
@@ -75,7 +75,7 @@ class SkeletorSessionTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('set')
             ->never();
 
-        $cache = new SkeletorSession($this->session, $this->clock);
+        $cache = new SkeletorSessionCache($this->session, $this->clock);
         $actual = $cache->get('key');
         $this->assertNull($actual);
     }
@@ -89,7 +89,7 @@ class SkeletorSessionTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('set')
             ->with('mcp-cache-KEY-suffix', Mockery::any());
 
-        $cache = new SkeletorSession($this->session, $this->clock, 'suffix');
+        $cache = new SkeletorSessionCache($this->session, $this->clock, 'suffix');
         $cache->get('KEY');
         $this->assertTrue($cache->set('KEY', null));
     }

@@ -15,7 +15,7 @@ use Sk\Session;
 /**
  * @internal
  */
-class SkeletorSession implements CacheInterface
+class SkeletorSessionCache implements CacheInterface
 {
     use KeySaltingTrait;
 

@@ -13,7 +13,7 @@ use MCP\Cache\Item\Item;
 /**
  * @internal
  */
-class Memory implements CacheInterface
+class MemoryCache implements CacheInterface
 {
     /**
      * @var array
