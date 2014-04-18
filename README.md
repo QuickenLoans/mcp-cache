@@ -21,7 +21,7 @@ Get takes any string as a key and does a lookup of the data.
 
 **Please Note:** Missing data will return null. There is no difference between a cache hit of a `null` value and a cache miss.
 
-**Please Note:** It is not necessary to serialize objects. Serialization will be optimized by each cache implementation.
+**Please Note:** It is not necessary to serialize objects before storage. Serialization will be optimized by each cache implementation.
 
 ```php
 public function set($key, $value, $ttl = 0);
