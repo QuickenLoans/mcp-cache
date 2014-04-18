@@ -7,6 +7,9 @@
 
 namespace MCP\Cache;
 
+use MCP\Cache\Item\Item;
+use MCP\Cache\Utility\KeySaltingTrait;
+use MCP\DataType\Time\Clock;
 use Sk\Session;
 
 /**
@@ -15,7 +18,6 @@ use Sk\Session;
 class SkeletorSession implements CacheInterface
 {
     use KeySaltingTrait;
-    use ValidationTrait;
 
     /**
      * @var string
@@ -28,6 +30,11 @@ class SkeletorSession implements CacheInterface
     private $session;
 
     /**
+     * @var Clock
+     */
+    private $clock;
+
+    /**
      * @var string|null
      */
     private $suffix;
@@ -38,11 +45,13 @@ class SkeletorSession implements CacheInterface
      * data with a code push or other configuration change.
      *
      * @param Session $session
+     * @param Clock $clock
      * @param string|null $suffix
      */
-    public function __construct(Session $session, $suffix = null)
+    public function __construct(Session $session, Clock $clock, $suffix = null)
     {
         $this->session = $session;
+        $this->clock = $clock;
         $this->suffix = $suffix;
     }
 
@@ -53,12 +62,12 @@ class SkeletorSession implements CacheInterface
     {
         $key = $this->salted($key, $this->suffix);
 
-        $data = $this->session->get($key);
-        if (!isset($data)) {
+        $item = $this->session->get($key);
+        if (!$item instanceof Item) {
             return null;
         }
 
-        return $data;
+        return $item->data($this->clock()->now());
     }
 
     /**
@@ -66,10 +75,17 @@ class SkeletorSession implements CacheInterface
      */
     public function set($key, $value, $ttl = 0)
     {
-        $this->validateCacheability($value);
         $key = $this->salted($key, $this->suffix);
+        $expiry = null;
 
-        $this->session->set($key, $value);
+        if ($ttl > 0) {
+            $delta = sprintf('+%d seconds', $ttl);
+            $expiry = $this->clock->read()->modify($delta);
+        }
+
+        $item = new Item($value, $expiry);
+        $this->session->set($key, $item);
+
         return true;
     }
 }
