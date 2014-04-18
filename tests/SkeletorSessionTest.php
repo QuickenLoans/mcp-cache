@@ -80,16 +80,6 @@ class SkeletorSessionTest extends PHPUnit_Framework_TestCase
         $this->assertNull($actual);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Resources cannot be cached
-     */
-    public function testCachingResourceBlowsUp()
-    {
-        $cache = new SkeletorSession($this->session, $this->clock);
-        $actual = $cache->set('key', fopen('php://stdout', 'w'));
-    }
-
     public function testCacheKeyIsBuiltCorrectlyWhenSuffixed()
     {
         $this->session
