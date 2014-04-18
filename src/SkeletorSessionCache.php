@@ -67,7 +67,7 @@ class SkeletorSessionCache implements CacheInterface
             return null;
         }
 
-        return $item->data($this->clock()->now());
+        return $item->data($this->clock->now());
     }
 
     /**
