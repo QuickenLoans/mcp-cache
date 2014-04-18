@@ -8,14 +8,13 @@
 namespace MCP\Cache;
 
 use MCP\DataType\Time\TimePoint;
+use MCP\Cache\Item\Item;
 
 /**
  * @internal
  */
 class Memory implements CacheInterface
 {
-    use ValidationTrait;
-
     /**
      * @var array
      */
@@ -35,7 +34,12 @@ class Memory implements CacheInterface
             return null;
         }
 
-        return $this->cache[$key];
+        $item = $this->cache[$key];
+        if (!$item instanceof Item) {
+            return null;
+        }
+
+        return $item->data();
     }
 
     /**
@@ -45,9 +49,7 @@ class Memory implements CacheInterface
      */
     public function set($key, $value, $ttl = 0)
     {
-        $this->validateCacheability($value);
-
-        $this->cache[$key] = $value;
+        $this->cache[$key] = new Item($value);
         return true;
     }
 }
