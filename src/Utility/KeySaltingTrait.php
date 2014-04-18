@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace MCP\Cache;
+namespace MCP\Cache\Utility;
 
 /**
  * If using this trait, an optional class constant "PREFIX" can be used to
