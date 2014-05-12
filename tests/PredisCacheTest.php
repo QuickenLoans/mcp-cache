@@ -70,6 +70,19 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
         $this->assertSame(serialize($inputValue), $setValue);
     }
 
+    public function testSettingNullDeletesKeyInstead()
+    {
+        $this->predis
+            ->shouldReceive('del')
+            ->with('mcp-cache:test')
+            ->once();
+
+        $cache = new PredisCache($this->predis);
+        $result = $cache->set('test', null);
+
+        $this->assertTrue($result);
+    }
+
     public function testKeyIsSalted()
     {
         $this->predis

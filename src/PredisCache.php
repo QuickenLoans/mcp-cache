@@ -50,6 +50,9 @@ class PredisCache implements CacheInterface
     }
 
     /**
+     * This cacher performs serialization and unserialization. All string responses from redis will be unserialized.
+     *
+     * For this reason, only mcp cachers should attempt to retrieve data cached by mcp cachers.
      * {@inheritdoc}
      */
     public function get($key)
@@ -57,6 +60,10 @@ class PredisCache implements CacheInterface
         $key = $this->salted($key, $this->suffix);
 
         $raw = $this->predis->get($key);
+
+        // every response should be a php serialized string.
+        // values not matching this pattern will explode.
+        // missing data should return null, which is not unserialized.
         $value = (is_string($raw)) ? unserialize($raw) : $raw;
 
         return $value;
@@ -68,12 +75,23 @@ class PredisCache implements CacheInterface
     public function set($key, $value, $ttl = 0)
     {
         $key = $this->salted($key, $this->suffix);
-        $value = serialize($value);
 
-        if ($ttl > 0) {
-            return $this->predis->setex($key, $value, $ttl);
+        // handle deletions
+        if ($value === null) {
+            $this->predis->del($key);
+            return true;
         }
 
-        return $this->predis->set($key, $value);
+        $value = serialize($value);
+
+        // set with expiration
+        if ($ttl > 0) {
+            $this->predis->setex($key, $value, $ttl);
+            return true;
+        }
+
+        // set with no expiration
+        $this->predis->set($key, $value);
+        return true;
     }
 }
