@@ -72,7 +72,8 @@ This cache will store data in the redis using [predis](https://github.com/nrk/pr
 An optional suffix may be provided to salt the cache keys. This can be used to invalidate the entire cache
 between code pushes or other configuration changes.
 
-Setting a key to null will delete the key rather than setting the value of null. It is not possible to store a `null` value with the predis cacher.
+Setting a key to `null` will delete the key rather than setting the value to `null`.
+It is not possible to store a `null` value with the predis cacher.
 
 ```php
 use Predis\Client;
