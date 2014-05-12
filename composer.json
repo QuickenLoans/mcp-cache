@@ -1,7 +1,7 @@
 {
     "name": "ql/mcp-cache",
     "description": "Caching standard for mcp services",
-    "homepage": "http://git/skluck/mcp-cache",
+    "homepage": "http://git/mcp/mcp-cache",
     "license": "proprietary",
     "authors": [
         {
@@ -11,7 +11,11 @@
     ],
 
     "archive": {
-        "exclude": ["/bin", "/phpunit.xml.dist", "/tests"]
+        "exclude": [
+            "/bin",
+            "/phpunit.xml.dist",
+            "/tests"
+        ]
     },
     "autoload": {
         "psr-4": {
@@ -26,7 +30,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0.x-dev"
+            "dev-master": "2.1.x-dev"
         }
     },
     "repositories": [
@@ -41,6 +45,7 @@
     "require-dev": {
         "mockery/mockery": "*",
         "phpunit/phpunit": "3.7.*",
-        "phpunit/php-invoker": "*"
+        "phpunit/php-invoker": "*",
+        "predis/predis": "*"
     }
 }

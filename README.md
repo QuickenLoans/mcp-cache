@@ -2,13 +2,6 @@
 
 Caching standard for mcp services
 
-### Dependencies
-
-* MCP Core
-    * Time
-* Skeletor (Optional)
-
-
 ### Usage
 
 The `CacheInterface` has only two methods - `get` and `set`.
