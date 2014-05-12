@@ -10,6 +10,8 @@ namespace MCP\Cache\Utility;
 /**
  * If using this trait, an optional class constant "PREFIX" can be used to
  * prefix all cache keys.
+ *
+ * @internal
  */
 trait KeySaltingTrait
 {
@@ -22,12 +24,17 @@ trait KeySaltingTrait
      */
     private function salted($key, $suffix = null)
     {
+        $delimiter = ':';
+        if (defined('static::DELIMITER')) {
+            $delimiter = static::DELIMITER;
+        }
+
         if (defined('static::PREFIX')) {
-            $key = sprintf('%s-%s', static::PREFIX, $key);
+            $key = sprintf('%s%s%s', static::PREFIX, $delimiter, $key);
         }
 
         if ($suffix) {
-            return sprintf('%s-%s', $key, $suffix);
+            return sprintf('%s%s%s', $key, $delimiter, $suffix);
         }
 
         return $key;

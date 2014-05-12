@@ -20,9 +20,12 @@ class SkeletorSessionCache implements CacheInterface
     use KeySaltingTrait;
 
     /**
+     * Properties read and used by the salting trait.
+     *
      * @var string
      */
     const PREFIX = 'mcp-cache';
+    const DELIMITER = '-';
 
     /**
      * @var Session
