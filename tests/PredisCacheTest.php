@@ -58,10 +58,10 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
         $setValue = null;
         $this->predis
             ->shouldReceive('setex')
-            ->with('mcp-cache:test', Mockery::on(function($v) use (&$setValue) {
+            ->with('mcp-cache:test', 60, Mockery::on(function($v) use (&$setValue) {
                 $setValue = $v;
                 return true;
-            }), 60);
+            }));
 
         $cache = new PredisCache($this->predis);
         $cache->set('test', $inputValue, 60);

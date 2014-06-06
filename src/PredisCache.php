@@ -86,7 +86,7 @@ class PredisCache implements CacheInterface
 
         // set with expiration
         if ($ttl > 0) {
-            $this->predis->setex($key, $value, $ttl);
+            $this->predis->setex($key, $ttl, $value);
             return true;
         }
 
