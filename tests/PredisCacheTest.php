@@ -97,4 +97,44 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
         // non-string values are not unserialized
         $this->assertSame(null, $value);
     }
+
+    public function testMaxTTLisUsedIfNoTtlIsProvidedAtRuntime()
+    {
+        $setValue = null;
+        $this->predis
+            ->shouldReceive('setex')
+            ->with('mcp-cache:test', 60, Mockery::on(function($v) use (&$setValue) {
+                $setValue = $v;
+                return true;
+            }));
+
+
+        $cache = new PredisCache($this->predis);
+        $cache->setMaximumTtl(60);
+
+        $cache->set('test', 123);
+
+        // assert set value is properly serialized
+        $this->assertSame(serialize(123), $setValue);
+    }
+
+    public function testMaxTTLisUsedIfRuntimeExpirationExceedsMaxValue()
+    {
+        $setValue = null;
+        $this->predis
+            ->shouldReceive('setex')
+            ->with('mcp-cache:test', 60, Mockery::on(function($v) use (&$setValue) {
+                $setValue = $v;
+                return true;
+            }));
+
+
+        $cache = new PredisCache($this->predis);
+        $cache->setMaximumTtl(60);
+
+        $cache->set('test', 'data', 80);
+
+        // assert set value is properly serialized
+        $this->assertSame(serialize('data'), $setValue);
+    }
 }
