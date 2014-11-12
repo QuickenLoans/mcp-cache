@@ -14,12 +14,13 @@
         "exclude": [
             "/bin",
             "/phpunit.xml.dist",
-            "/tests"
+            "/testing"
         ]
     },
     "autoload": {
         "psr-4": {
-            "MCP\\Cache\\": "src"
+            "MCP\\Cache\\": "src",
+            "MCP\\Cache\\Testing\\": "testing/src"
         }
     },
     "config": {
@@ -27,11 +28,6 @@
     },
     "conflict": {
         "ql/mcp": "*"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.1.x-dev"
-        }
     },
     "repositories": [
         {
@@ -45,7 +41,7 @@
     },
     "require-dev": {
         "mockery/mockery": "*",
-        "phpunit/phpunit": "3.7.*",
+        "phpunit/phpunit": "4.*",
         "phpunit/php-invoker": "*",
         "predis/predis": "*"
     }

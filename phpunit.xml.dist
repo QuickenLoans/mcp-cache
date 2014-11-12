@@ -1,27 +1,32 @@
 <?xml version="1.0"?>
-    <phpunit
+<phpunit
         backupGlobals="false"
         backupStaticAttributes="false"
-        cacheTokens="false"
+        cacheTokens="true"
         colors="true"
         convertErrorsToExceptions="true"
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
-        forceCoversAnnotation="true"
+        forceCoversAnnotation="false"
         mapTestClassNameToCoveredClassName="true"
-        printerClass="PHPUnit_TextUI_ResultPrinter"
         processIsolation="false"
-        stopOnError="false"
-        stopOnFailure="false"
-        stopOnIncomplete="false"
-        stopOnSkipped="false"
-        strict="true"
+
+        stopOnError="true"
+        stopOnFailure="true"
+        stopOnIncomplete="true"
+        stopOnSkipped="true"
+
+        beStrictAboutTestsThatDoNotTestAnything="false"
+        beStrictAboutOutputDuringTests="true"
+        beStrictAboutTestSize="true"
+        checkForUnintentionallyCoveredCode="true"
+
         timeoutForSmallTests="5"
         verbose="true">
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory>src/</directory>
+            <directory>src</directory>
         </whitelist>
     </filter>
 
@@ -30,10 +35,10 @@
     </listeners>
 
     <logging>
-    <!--
-        <log type="coverage-html" target="build/php-code-coverage" charset="UTF-8" highlight="true" lowUpperBound="98" highLowerBound="99" />
-    -->
         <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
+
+
+
     </logging>
 
     <php>
@@ -44,7 +49,7 @@
 
     <testsuites>
         <testsuite name="Unit Tests">
-            <directory>tests</directory>
+            <directory>testing/tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>
