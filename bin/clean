@@ -1,20 +1,24 @@
-#!/bin/bash
-DIR=$( cd "$( dirname "$0" )" && pwd )
-DELFILES=(
+#!/usr/bin/env bash
+
+# configure
+set -e
+set -u
+
+# declare variables
+p_DIR=$( cd "$( dirname "$0" )" && pwd )
+p_DELFILES=(
+    "vendor"
     "composer.lock"
 )
 
-DELFOLDERS=(
-    "build"
-    "vendor"
-)
-
-for i in ${DELFILES[@]}
+# script
+for i in ${p_DELFILES[@]}
 do
-    rm -f $DIR/../$i
-done
+    FILE="$p_DIR/../$i"
+    EXISTS=$(test -e $FILE && echo 1 || echo 0)
+    if [[ $EXISTS -eq "1" ]]; then
+        echo "Removing $FILE"
+        rm -rf "$FILE"
+    fi
 
-for i in ${DELFOLDERS[@]}
-do
-    rm -rf $DIR/../$i
 done
