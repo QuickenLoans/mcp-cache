@@ -81,4 +81,19 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(null, $this->cache->get('a'));
     }
 
+    /**
+     * @large
+     */
+    public function testUseMaxTtl()
+    {
+        $this->cache->setMaximumTtl(1);
+        $out = $this->cache->set('a', 'b', 10);
+        $this->assertEquals(true, $out);
+
+        // sleep until expired
+        sleep(2);
+
+        $this->assertEquals(null, $this->cache->get('a'));
+    }
+
 }

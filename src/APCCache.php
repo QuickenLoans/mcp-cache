@@ -25,11 +25,17 @@ class APCCache implements CacheInterface
     private $clock;
 
     /**
+     * @var null|int
+     */
+    private $ttl;
+
+    /**
      * @param \MCP\DataType\Time\Clock $clock
      */
     public function __construct(Clock $clock)
     {
         $this->clock = $clock;
+        $this->ttl = null;
     }
 
     /**
@@ -60,6 +66,7 @@ class APCCache implements CacheInterface
     public function set($key, $value, $ttl = 0)
     {
         $expires = null;
+        $ttl = $this->allowedTtl($ttl);
 
         // already expired, invalidate stored value and don't insert
         if ($ttl < 0) {
@@ -82,5 +89,30 @@ class APCCache implements CacheInterface
     public function clear()
     {
         return apc_clear_cache('user');
+    }
+
+    /**
+     * Set the maximum ttl in seconds
+     *
+     * @param $ttl
+     */
+    public function setMaximumTtl($ttl)
+    {
+        $this->ttl = (int)$ttl;
+    }
+
+    /**
+     * Determine the actual TTL
+     *
+     * @param $ttl
+     * @return int
+     */
+    private function allowedTtl($ttl)
+    {
+        if ($this->ttl !== null && ($ttl > $this->ttl || $ttl == 0)) {
+            return $this->ttl;
+        }
+
+        return $ttl;
     }
 }
