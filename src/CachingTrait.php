@@ -17,8 +17,6 @@ namespace MCP\Cache;
  * For example:
  * Use $this->cache()
  * Not $this->cache
- *
- * @internal
  */
 trait CachingTrait
 {

@@ -132,6 +132,7 @@ Please note that it is possible to set a *global* ttl for your class. If a ttl i
 - [MemoryCache](#memorycache)
 - [SkeletorSessionCache](#skeletorsessioncache)
 - [PredisCache](#prediscache)
+- [APC Cache](#apc-cache)
 
 ### MemoryCache
 
@@ -195,6 +196,26 @@ $cache->set('key', $data);
 
 // Store data with expiration of 10 minutes
 $cache->set('key', $data, 600);
+```
+
+### APC Cache
+
+This cache will store items in the APC user cache space.
+
+```php
+use MCP\Cache\APCCache;
+use MCP\DataType\Time\Clock;
+
+$cache = new APCCache(new Clock());
+
+// Store data
+$cache->set('key', $data);
+
+// Store data with an expiration of 10 minutes
+$cache->set('key', $data, 600);
+
+// Retrieve data
+$data = $cache->get('key');
 ```
 
 ### Building
