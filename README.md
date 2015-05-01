@@ -200,13 +200,17 @@ $cache->set('key', $data, 600);
 
 ### APC Cache
 
-This cache will store items in the APC user cache space.
+This cache will store items in the APC user cache space. Optionally, a maximum TTL may be set by calling the 
+`APCCache::setMaximumTtl($ttl)` method.
 
 ```php
 use MCP\Cache\APCCache;
 use MCP\DataType\Time\Clock;
 
 $cache = new APCCache(new Clock());
+
+// Optionally, set the maximum TTL to 10 minutes
+$cache->setMaximumTtl(600);
 
 // Store data
 $cache->set('key', $data);
