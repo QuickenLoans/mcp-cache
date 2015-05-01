@@ -42,4 +42,11 @@ class MemoryCacheTest extends PHPUnit_Framework_TestCase
         $cache = new MemoryCache;
         $actual = $cache->set('key', fopen('php://stdout', 'w'));
     }
+
+    public function testGetNotFound()
+    {
+        $cache = new MemoryCache();
+
+        $this->assertEquals(null, $cache->get('aaaaaaaaa'));
+    }
 }

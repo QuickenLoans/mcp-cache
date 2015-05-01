@@ -7,7 +7,6 @@
 
 namespace MCP\Cache;
 
-use MCP\DataType\Time\TimePoint;
 use MCP\Cache\Item\Item;
 
 /**
@@ -16,7 +15,7 @@ use MCP\Cache\Item\Item;
 class MemoryCache implements CacheInterface
 {
     /**
-     * @var array
+     * @var Item[]
      */
     private $cache;
 
@@ -30,16 +29,11 @@ class MemoryCache implements CacheInterface
      */
     public function get($key)
     {
-        if (!isset($this->cache[$key])) {
-            return null;
+        if (isset($this->cache[$key])) {
+            return $this->cache[$key]->data();
         }
 
-        $item = $this->cache[$key];
-        if (!$item instanceof Item) {
-            return null;
-        }
-
-        return $item->data();
+        return null;
     }
 
     /**

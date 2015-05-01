@@ -7,6 +7,7 @@
 
 namespace MCP\Cache;
 
+use MCP\Cache\Item\Item;
 use MCP\DataType\Time\Clock;
 use MCP\DataType\Time\TimePoint;
 use Mockery;
@@ -25,6 +26,9 @@ class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
 
     public function testSettingValueWrapsItInItem()
     {
+        $key = 'key-name';
+        $value = 'whatever';
+
         $item = null;
         $this->session
             ->shouldReceive('set')
@@ -34,7 +38,7 @@ class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
             }));
 
         $cache = new SkeletorSessionCache($this->session, $this->clock);
-        $cache->set('key-name', 'whatever');
+        $cache->set($key, $value);
 
         $this->assertInstanceOf('MCP\Cache\Item\Item', $item);
     }
@@ -92,5 +96,31 @@ class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
         $cache = new SkeletorSessionCache($this->session, $this->clock, 'suffix');
         $cache->get('KEY');
         $this->assertTrue($cache->set('KEY', null));
+    }
+
+    public function testSimpleGet()
+    {
+        $key = 'key';
+        $value = 'value';
+
+        $session = $this->getMockBuilder('Sk\Session')
+            ->disableOriginalConstructor()
+            ->setMethods(['set', 'get'])
+            ->getMock();
+
+        $session->expects($this->once())
+            ->method('set')
+            ->with($this->anything(), $this->anything());
+
+        $session->expects($this->once())
+            ->method('get')
+            ->with($this->anything())
+            ->will($this->returnValue(new Item($value)));
+
+        $cache = new SkeletorSessionCache($session, $this->clock);
+        $cache->set($key, $value);
+
+        $this->assertEquals($value, $cache->get($key));
+
     }
 }

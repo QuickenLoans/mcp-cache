@@ -23,7 +23,7 @@ class Item
     private $data;
 
     /**
-     * @var TiemPoint|null
+     * @var \MCP\DataType\Time\TimePoint|null
      */
     private $expiry;
 

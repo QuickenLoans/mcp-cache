@@ -64,6 +64,7 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
             }));
 
         $cache = new PredisCache($this->predis);
+        $cache->setMaximumTtl(90);
         $cache->set('test', $inputValue, 60);
 
         // assert set value is properly serialized
