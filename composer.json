@@ -1,56 +1,47 @@
 {
-  "name": "ql/mcp-cache",
-  "description": "Caching standard for mcp services",
-  "homepage": "http://git/mcp/mcp-cache",
-  "license": "proprietary",
-  "authors": [
-    {
-      "name": "Steve Kluck",
-      "email": "stevekluck@quickenloans.com"
+    "name": "ql/mcp-cache",
+    "description": "Caching standard for mcp services",
+    "homepage": "http://git/mcp/mcp-cache",
+    "license": "proprietary",
+    "authors": [
+        {
+        "name": "Steve Kluck",
+        "email": "stevekluck@quickenloans.com"
+        },
+        {
+        "name": "Matt Colf",
+        "email": "mattcolf@quickenloans.com"
+        }
+    ],
+    "archive": {
+        "exclude": [
+            "/phpunit.xml.dist",
+            "/testing"
+        ]
     },
-    {
-      "name": "Matt Colf",
-      "email": "mattcolf@quickenloans.com"
+    "autoload": {
+        "psr-4": { "MCP\\Cache\\": "src", "MCP\\Cache\\Testing\\": "testing/src" }
+    },
+    "config": {
+        "preferred-install": "dist"
+    },
+    "repositories": [
+        { "type": "composer", "url": "http://composer/" }
+    ],
+
+    "require": {
+        "php": ">=5.4",
+        "ql/mcp-core": ">=1"
+    },
+    "require-dev": {
+        "mockery/mockery": "*",
+        "phpunit/phpunit": "4.*",
+        "phpunit/php-invoker": "*",
+        "predis/predis": "*",
+        "ext-apc": "*"
+    },
+    "suggest": {
+        "predis/predis": "Required if using Redis Cache.",
+        "ext-apc": "Required if using APC Cache"
     }
-  ],
-  "archive": {
-    "exclude": [
-      "/bin",
-      "/phpunit.xml.dist",
-      "/testing"
-    ]
-  },
-  "autoload": {
-    "psr-4": {
-      "MCP\\Cache\\": "src",
-      "MCP\\Cache\\Testing\\": "testing/src"
-    }
-  },
-  "config": {
-    "preferred-install": "dist"
-  },
-  "conflict": {
-    "ql/mcp": "*"
-  },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "http://composer/"
-    }
-  ],
-  "require": {
-    "php": ">=5.4",
-    "ql/mcp-core": ">=1"
-  },
-  "require-dev": {
-    "mockery/mockery": "*",
-    "phpunit/phpunit": "4.*",
-    "phpunit/php-invoker": "*",
-    "predis/predis": "*",
-    "ext-apc": "*"
-  },
-  "suggest": {
-    "predis/predis": "Required if using Redis Cache.",
-    "ext-apc": "Required if using APC Cache"
-  }
 }
