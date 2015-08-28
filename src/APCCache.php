@@ -8,6 +8,7 @@
 namespace MCP\Cache;
 
 use MCP\Cache\Item\Item;
+use MCP\Cache\Utility\MaximumTTLTrait;
 use MCP\DataType\Time\Clock;
 
 /**
@@ -19,15 +20,12 @@ use MCP\DataType\Time\Clock;
  */
 class APCCache implements CacheInterface
 {
+    use MaximumTTLTrait;
+
     /**
      * @var Clock
      */
     private $clock;
-
-    /**
-     * @var null|int
-     */
-    private $ttl;
 
     /**
      * @param Clock $clock
@@ -35,8 +33,6 @@ class APCCache implements CacheInterface
     public function __construct(Clock $clock = null)
     {
         $this->clock = $clock ?: new Clock('now', 'UTC');
-
-        $this->ttl = null;
     }
 
     /**
@@ -59,7 +55,7 @@ class APCCache implements CacheInterface
     public function set($key, $value, $ttl = 0)
     {
         $expires = null;
-        $ttl = $this->allowedTtl($ttl);
+        $ttl = $this->determineTtl($ttl);
 
         // already expired, invalidate stored value and don't insert
         if ($ttl < 0) {
@@ -82,31 +78,5 @@ class APCCache implements CacheInterface
     public function clear()
     {
         return apc_clear_cache('user');
-    }
-
-    /**
-     * Set the maximum ttl in seconds
-     *
-     * @param $ttl
-     */
-    public function setMaximumTtl($ttl)
-    {
-        $this->ttl = (int)$ttl;
-    }
-
-    /**
-     * Determine the actual TTL
-     *
-     * @param $ttl
-     *
-     * @return int
-     */
-    private function allowedTtl($ttl)
-    {
-        if ($this->ttl !== null && ($ttl > $this->ttl || $ttl == 0)) {
-            return $this->ttl;
-        }
-
-        return $ttl;
     }
 }

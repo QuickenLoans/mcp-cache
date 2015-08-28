@@ -8,6 +8,7 @@
 namespace MCP\Cache;
 
 use MCP\Cache\Utility\KeySaltingTrait;
+use MCP\Cache\Utility\MaximumTTLTrait;
 use Predis\Client;
 
 /**
@@ -16,6 +17,7 @@ use Predis\Client;
 class PredisCache implements CacheInterface
 {
     use KeySaltingTrait;
+    use MaximumTTLTrait;
 
     /**
      * Properties read and used by the salting trait.
@@ -36,11 +38,6 @@ class PredisCache implements CacheInterface
     private $suffix;
 
     /**
-     * @var int
-     */
-    private $maximumTtl;
-
-    /**
      * An optional suffix can be provided which will be appended to the key
      * used to store and retrieve data. This can be used to throw away cached
      * data with a code push or other configuration change.
@@ -52,8 +49,6 @@ class PredisCache implements CacheInterface
     {
         $this->predis = $client;
         $this->suffix = $suffix;
-
-        $this->maximumTtl = 0;
     }
 
     /**
@@ -104,42 +99,5 @@ class PredisCache implements CacheInterface
         // set with no expiration
         $this->predis->set($key, $value);
         return true;
-    }
-
-    /**
-     * Set the maximum TTL in seconds.
-     *
-     * @param int $ttl
-     *
-     * @return null
-     */
-    public function setMaximumTtl($ttl)
-    {
-        $this->maximumTtl = (int) $ttl;
-    }
-
-    /**
-     * @param int $ttl
-     *
-     * @return int
-     */
-    private function determineTtl($ttl)
-    {
-        // if no max is set, use the user provided value
-        if (!$this->maximumTtl) {
-            return $ttl;
-        }
-
-        // if the provided ttl is over the maximum ttl, use the max.
-        if ($this->maximumTtl < $ttl) {
-            return $this->maximumTtl;
-        }
-
-        // If no ttl is set, use the max
-        if ($ttl == 0) {
-            return $this->maximumTtl;
-        }
-
-        return $ttl;
     }
 }
