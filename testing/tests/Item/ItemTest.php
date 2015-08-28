@@ -53,7 +53,7 @@ class ItemTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException MCP\Cache\Exception
      * @expectedExceptionMessage Resources cannot be cached
      */
     public function testCachingResourceBlowsUp()

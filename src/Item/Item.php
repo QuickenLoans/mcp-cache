@@ -7,7 +7,7 @@
 
 namespace MCP\Cache\Item;
 
-use InvalidArgumentException;
+use MCP\Cache\Exception;
 use MCP\DataType\Time\TimePoint;
 
 /**
@@ -17,6 +17,8 @@ use MCP\DataType\Time\TimePoint;
  */
 class Item
 {
+    const ERR_RESOURCE_UNCACHEABLE = 'Resources cannot be cached.';
+
     /**
      * @var mixed
      */
@@ -83,7 +85,7 @@ class Item
     private function validateCacheability($value)
     {
         if (is_resource($value)) {
-            throw new InvalidArgumentException('Resources cannot be cached.');
+            throw new Exception(self::ERR_RESOURCE_UNCACHEABLE);
         }
     }
 }
