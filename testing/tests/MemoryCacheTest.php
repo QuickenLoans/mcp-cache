@@ -34,7 +34,7 @@ class MemoryCacheTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException MCP\Cache\Exception
      * @expectedExceptionMessage Resources cannot be cached
      */
     public function testCachingResourceBlowsUp()
@@ -45,7 +45,7 @@ class MemoryCacheTest extends PHPUnit_Framework_TestCase
 
     public function testGetNotFound()
     {
-        $cache = new MemoryCache();
+        $cache = new MemoryCache;
 
         $this->assertEquals(null, $cache->get('aaaaaaaaa'));
     }
