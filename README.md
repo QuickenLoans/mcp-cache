@@ -132,7 +132,7 @@ Please note that it is possible to set a *global* ttl for your class. If a ttl i
 - [MemoryCache](#memorycache)
 - [SkeletorSessionCache](#skeletorsessioncache)
 - [PredisCache](#prediscache)
-- [APC Cache](#apc-cache)
+- [APCCache](#apc-cache)
 
 ### MemoryCache
 
@@ -198,7 +198,7 @@ $cache->set('key', $data);
 $cache->set('key', $data, 600);
 ```
 
-### APC Cache
+### APCCache
 
 This cache will store items in the APC user cache space. Optionally, a maximum TTL may be set by calling the 
 `APCCache::setMaximumTtl($ttl)` method.

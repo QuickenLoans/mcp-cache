@@ -5,12 +5,12 @@
     "license": "proprietary",
     "authors": [
         {
-        "name": "Steve Kluck",
-        "email": "stevekluck@quickenloans.com"
+            "name": "Steve Kluck",
+            "email": "stevekluck@quickenloans.com"
         },
         {
-        "name": "Matt Colf",
-        "email": "mattcolf@quickenloans.com"
+            "name": "Matt Colf",
+            "email": "mattcolf@quickenloans.com"
         }
     ],
     "archive": {
