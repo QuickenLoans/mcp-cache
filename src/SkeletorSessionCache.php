@@ -51,10 +51,10 @@ class SkeletorSessionCache implements CacheInterface
      * @param Clock $clock
      * @param string|null $suffix
      */
-    public function __construct(Session $session, Clock $clock, $suffix = null)
+    public function __construct(Session $session, Clock $clock = null, $suffix = null)
     {
         $this->session = $session;
-        $this->clock = $clock;
+        $this->clock = $clock ?: new Clock('now', 'UTC');
         $this->suffix = $suffix;
     }
 

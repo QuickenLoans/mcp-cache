@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
@@ -20,7 +20,7 @@ use MCP\DataType\Time\Clock;
 class APCCache implements CacheInterface
 {
     /**
-     * @var \MCP\DataType\Time\Clock
+     * @var Clock
      */
     private $clock;
 
@@ -30,11 +30,12 @@ class APCCache implements CacheInterface
     private $ttl;
 
     /**
-     * @param \MCP\DataType\Time\Clock $clock
+     * @param Clock $clock
      */
-    public function __construct(Clock $clock)
+    public function __construct(Clock $clock = null)
     {
-        $this->clock = $clock;
+        $this->clock = $clock ?: new Clock('now', 'UTC');
+
         $this->ttl = null;
     }
 
