@@ -22,6 +22,8 @@ class APCCache implements CacheInterface
 {
     use MaximumTTLTrait;
 
+    const ERR_APC_NOT_INSTALLED = 'APC must be installed to use this cache.';
+
     /**
      * @var Clock
      */
@@ -32,6 +34,10 @@ class APCCache implements CacheInterface
      */
     public function __construct(Clock $clock = null)
     {
+        if (!function_exists('\apc_fetch')) {
+            throw new Exception(self::ERR_APC_NOT_INSTALLED);
+        }
+
         $this->clock = $clock ?: new Clock('now', 'UTC');
     }
 
