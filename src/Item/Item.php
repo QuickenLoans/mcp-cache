@@ -23,7 +23,7 @@ class Item
     private $data;
 
     /**
-     * @var \MCP\DataType\Time\TimePoint|null
+     * @var TimePoint|null
      */
     private $expiry;
 
@@ -46,6 +46,7 @@ class Item
      * If provided, the data will be checked for expiration.
      *
      * @param TimePoint|null $now
+     *
      * @return mixed
      */
     public function data(TimePoint $now = null)
@@ -59,6 +60,7 @@ class Item
 
     /**
      * @param TimePoint $now
+     *
      * @return boolean
      */
     private function isExpired(TimePoint $now)

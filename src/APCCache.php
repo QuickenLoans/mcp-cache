@@ -40,10 +40,7 @@ class APCCache implements CacheInterface
     }
 
     /**
-     * Get a cache value by key. When a matching entry cannot be found, null will be returned.
-     *
-     * @param string $key
-     * @return mixed|null
+     * {@inheritdoc}
      */
     public function get($key)
     {
@@ -57,12 +54,7 @@ class APCCache implements CacheInterface
     }
 
     /**
-     * Set a value by key in the cache. Returns true on success.
-     *
-     * @param string $key
-     * @param mixed $value Anything not a resource
-     * @param int $ttl How long the data should live, in seconds
-     * @return boolean
+     * {@inheritdoc}
      */
     public function set($key, $value, $ttl = 0)
     {
@@ -106,6 +98,7 @@ class APCCache implements CacheInterface
      * Determine the actual TTL
      *
      * @param $ttl
+     *
      * @return int
      */
     private function allowedTtl($ttl)

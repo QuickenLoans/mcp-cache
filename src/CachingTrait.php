@@ -40,6 +40,7 @@ trait CachingTrait
 
     /**
      * @param string $key
+     *
      * @return mixed|null
      */
     private function getFromCache($key)
@@ -55,6 +56,7 @@ trait CachingTrait
      * @param string $key
      * @param mixed $value
      * @param mixed $ttl
+     *
      * @return null
      */
     private function setToCache($key, $value, $ttl = 0)
@@ -75,6 +77,7 @@ trait CachingTrait
 
     /**
      * @param CacheInterface $cache
+     *
      * @return null
      */
     public function setCache(CacheInterface $cache)
@@ -84,6 +87,7 @@ trait CachingTrait
 
     /**
      * @param int $ttl
+     *
      * @return null
      */
     public function setCacheTTL($ttl)

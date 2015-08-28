@@ -60,6 +60,7 @@ class PredisCache implements CacheInterface
      * This cacher performs serialization and unserialization. All string responses from redis will be unserialized.
      *
      * For this reason, only mcp cachers should attempt to retrieve data cached by mcp cachers.
+     *
      * {@inheritdoc}
      */
     public function get($key)
@@ -109,6 +110,7 @@ class PredisCache implements CacheInterface
      * Set the maximum TTL in seconds.
      *
      * @param int $ttl
+     *
      * @return null
      */
     public function setMaximumTtl($ttl)
@@ -118,6 +120,7 @@ class PredisCache implements CacheInterface
 
     /**
      * @param int $ttl
+     *
      * @return int
      */
     private function determineTtl($ttl)
