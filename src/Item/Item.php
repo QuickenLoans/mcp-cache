@@ -25,9 +25,18 @@ class Item
     private $data;
 
     /**
+     * The absolute point in time the data should expire.
+     *
      * @var TimePoint|null
      */
     private $expiry;
+
+    /**
+     * The original TTL specified by the client.
+     *
+     * @var int|null
+     */
+    private $ttl;
 
     /**
      * If provided, the data will expire at the $expiry time. If the data is
@@ -35,13 +44,16 @@ class Item
      *
      * @param mixed $data
      * @param TimePoint|null $expiry
+     * @param int|null $originalTTL
      */
-    public function __construct($data, TimePoint $expiry = null)
+    public function __construct($data, TimePoint $expiry = null, $originalTTL = null)
     {
         $this->validateCacheability($data);
 
         $this->data = $data;
+
         $this->expiry = $expiry;
+        $this->ttl = $originalTTL;
     }
 
     /**
@@ -58,6 +70,16 @@ class Item
         }
 
         return $this->data;
+    }
+
+    /**
+     * Get the original TTL.
+     *
+     * @return int|null
+     */
+    public function ttl()
+    {
+        return $this->ttl;
     }
 
     /**

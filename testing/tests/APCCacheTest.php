@@ -61,7 +61,12 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
 
     public function testGetImmediateExpire()
     {
-        $out = $this->cache->set('a', 'b', -1);
+        // Set data with long expiry
+        $out = $this->cache->set('a', 'b', 5);
+        $this->assertSame('b', $this->cache->get('a'));
+
+        // Set to null overrides
+        $out = $this->cache->set('a', null);
         $this->assertEquals(true, $out);
 
         $this->assertEquals(null, $this->cache->get('a'));

@@ -49,7 +49,15 @@ class ItemTest extends PHPUnit_Framework_TestCase
         $accessed = new TimePoint(2014, 4, 1, 13, 0, 0, 'UTC');
 
         $item = new Item('data', $expiry);
-        $this->assertNull($item->data($accessed));
+        $this->assertSame(null, $item->data($accessed));
+    }
+
+    public function testTTLisStoredInOriginalForm()
+    {
+        $expiry = new TimePoint(2014, 4, 1, 12, 0, 0, 'UTC');
+
+        $item = new Item('data', $expiry, 3600);
+        $this->assertSame(3600, $item->ttl());
     }
 
     /**

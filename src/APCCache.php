@@ -86,8 +86,8 @@ class APCCache implements CacheInterface
         $expires = null;
         $ttl = $this->determineTtl($ttl);
 
-        // already expired, invalidate stored value and don't insert
-        if ($ttl < 0) {
+        // handle deletions
+        if ($value === null) {
             apc_delete($key);
             return true;
         }
@@ -96,7 +96,8 @@ class APCCache implements CacheInterface
             $expires = $this->clock->read()->modify(sprintf('+%d seconds', $ttl));
         }
 
-        return apc_store($key, new Item($value, $expires), $ttl);
+        $item = new Item($value, $expires, $ttl);
+        return apc_store($key, $item, $ttl);
     }
 
     /**
