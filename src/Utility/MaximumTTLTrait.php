@@ -20,6 +20,8 @@ trait MaximumTTLTrait
     private $maximumTTL = 0;
 
     /**
+     * @todo change to "setMaximumTTL"
+     *
      * Set the maximum TTL in seconds.
      *
      * @param int $ttl
@@ -36,7 +38,7 @@ trait MaximumTTLTrait
      *
      * @return int
      */
-    private function determineTtl($ttl)
+    private function determineTTL($ttl)
     {
         // if no max is set, use the user provided value
         if (!$this->maximumTTL) {

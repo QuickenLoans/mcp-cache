@@ -10,6 +10,7 @@ namespace MCP\Cache;
 use MCP\Cache\Item\Item;
 use MCP\Cache\Utility\KeySaltingTrait;
 use MCP\Cache\Utility\MaximumTTLTrait;
+use MCP\Cache\Utility\StampedeProtectionTrait;
 use MCP\DataType\Time\Clock;
 
 /**
@@ -23,6 +24,7 @@ class APCCache implements CacheInterface
 {
     use KeySaltingTrait;
     use MaximumTTLTrait;
+    use StampedeProtectionTrait;
 
     const ERR_APC_NOT_INSTALLED = 'APC must be installed to use this cache.';
 
@@ -67,13 +69,16 @@ class APCCache implements CacheInterface
     {
         $key = $this->salted($key, $this->suffix);
 
-        $value = apc_fetch($key, $success);
+        $item = apc_fetch($key, $success);
 
-        if ($success && $value instanceof Item) {
-            return $value->data($this->clock->read());
+        if (!$success || !$item instanceof Item) {
+            return null;
         }
 
-        return null;
+        $now = $this->clock->read();
+        $earlyExpiry = $this->generatePrecomputeExpiration($item, $now);
+
+        return  $item->data($earlyExpiry);
     }
 
     /**
@@ -83,20 +88,21 @@ class APCCache implements CacheInterface
     {
         $key = $this->salted($key, $this->suffix);
 
-        $expires = null;
-        $ttl = $this->determineTtl($ttl);
-
         // handle deletions
         if ($value === null) {
             apc_delete($key);
             return true;
         }
 
+        // Get exact expiry time, if ttl desired
+        $ttl = $this->determineTTL($ttl);
+        $expiry = null;
         if ($ttl > 0) {
-            $expires = $this->clock->read()->modify(sprintf('+%d seconds', $ttl));
+            $delta = sprintf('+%d seconds', $ttl);
+            $expiry = $this->clock->read()->modify($delta);
         }
 
-        $item = new Item($value, $expires, $ttl);
+        $item = new Item($value, $expiry, $ttl);
         return apc_store($key, $item, $ttl);
     }
 

@@ -88,7 +88,7 @@ class PredisCache implements CacheInterface
         $value = serialize($value);
 
         // Resolve the TTL to use
-        $ttl = $this->determineTtl($ttl);
+        $ttl = $this->determineTTL($ttl);
 
         // set with expiration
         if ($ttl > 0) {
