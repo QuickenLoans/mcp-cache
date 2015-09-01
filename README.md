@@ -283,7 +283,7 @@ Delta = `10` % of TTL
 
 Set a value with a ttl of 60 seconds and run 1000 tests.
 
-TTL left   | precentile | early expires   | percent
+TTL left   | percentile | early expires   | percent
 ---------- | ---------- | --------------- | -------
 25s        | 60%        |   0 out of 1000 | 0%
 20s        | 66%        |  10 out of 1000 | 1%
