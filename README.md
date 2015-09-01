@@ -1,6 +1,26 @@
 # MCP Cache
 
-Caching standard for mcp services
+Caching standard for MCP services.
+
+## Contents
+
+* [Usage](#usage)
+* [Installation](#installation)
+* [Implementations](#implementations)
+    * [MemoryCache](#memorycache)
+    * [SkeletorSessionCache](#skeletorsessioncache)
+    * [PredisCache](#prediscache)
+    * [APCCache](#apccache)
+* [Stampede Protection](#stampede-protection)
+
+## Installation
+
+Run the following commands.
+
+```bash
+composer config repositories.internal-composer composer http://composer
+composer require ql/mcp-cache ^2.4
+```
 
 ## Usage
 
@@ -132,7 +152,7 @@ Please note that it is possible to set a *global* ttl for your class. If a ttl i
 - [MemoryCache](#memorycache)
 - [SkeletorSessionCache](#skeletorsessioncache)
 - [PredisCache](#prediscache)
-- [APC Cache](#apc-cache)
+- [APCCache](#apccache)
 
 ### MemoryCache
 
@@ -198,7 +218,7 @@ $cache->set('key', $data);
 $cache->set('key', $data, 600);
 ```
 
-### APC Cache
+### APCCache
 
 This cache will store items in the APC user cache space. Optionally, a maximum TTL may be set by calling the 
 `APCCache::setMaximumTtl($ttl)` method.
@@ -222,20 +242,55 @@ $cache->set('key', $data, 600);
 $data = $cache->get('key');
 ```
 
-### Building
+## Stampede Protection
 
-A PSR-4 compatible autoloader is required to use this library. Composer is recommended.
+In the case of high load services, when the cache expires or is flushed may requests attempting to regenerate the
+cache can cause a dog-piling effect on dependent ssystems, especially if the cost of regenerating the cached data is high.
+This is typically a concern under heavy load, when cached data is shared across many requests.
 
-### Installing
+Several methods exist for preventing this, for MCP Cache we implement **Probabilistic early expiration**.
 
-Install development dependencies
+With this approach, when the remaining TTL gets close to expiring, the application has a higher and higher random
+chance of returning a **cache miss** from `get`. In this scenario, a very small portion of users will attempt to regenerate
+the cache, rather than every request.
 
-    bin/install
+## Caching implementations with Stampede Protection
 
-Wipe compiled files:
+Note: by default stampede protection is **disabled**.
 
-    bin/clean
+- [APCCache](#apccache)
 
-Run tests:
+### Code example
 
-    vendor/bin/phpunit
+```php
+use MCP\Cache\APCCache;
+
+$cache = new APCCache;
+$cache->enableStampedeProtection();
+
+// Customize beta and delta (not recommended).
+$cache->setPrecomputeBeta(3);
+$cache->setPrecomputeDelta(10);
+
+// use cache as normal
+$cache->set('test', 'value', 60);
+```
+
+### Example Cache Stampede Protection
+
+Beta = `3`  
+Delta = `10` % of TTL
+
+Set a value with a ttl of 60 seconds and run 1000 tests.
+
+TTL left   | precentile | early expires   | percent
+---------- | ---------- | --------------- | -------
+25s        | 60%        |   0 out of 1000 | 0%
+20s        | 66%        |  10 out of 1000 | 1%
+15s        | 75%        |  40 out of 1000 | 4%
+6s         | 90%        | 300 out of 1000 | 30%
+3s         | 95%        | 500 out of 1000 | 50%
+
+References:
+- [https://en.wikipedia.org/wiki/Cache_stampede#Probabilistic_early_expiration](https://en.wikipedia.org/wiki/Cache_stampede#Probabilistic_early_expiration)
+- [http://www.vldb.org/pvldb/vol8/p886-vattani.pdf](http://www.vldb.org/pvldb/vol8/p886-vattani.pdf)

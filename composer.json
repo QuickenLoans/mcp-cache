@@ -5,12 +5,12 @@
     "license": "proprietary",
     "authors": [
         {
-        "name": "Steve Kluck",
-        "email": "stevekluck@quickenloans.com"
+            "name": "Steve Kluck",
+            "email": "stevekluck@quickenloans.com"
         },
         {
-        "name": "Matt Colf",
-        "email": "mattcolf@quickenloans.com"
+            "name": "Matt Colf",
+            "email": "mattcolf@quickenloans.com"
         }
     ],
     "archive": {
@@ -31,7 +31,7 @@
 
     "require": {
         "php": ">=5.4",
-        "ql/mcp-core": ">=1"
+        "ql/mcp-core": "~1.0"
     },
     "require-dev": {
         "mockery/mockery": "*",

@@ -7,7 +7,7 @@
 
 namespace MCP\Cache\Item;
 
-use InvalidArgumentException;
+use MCP\Cache\Exception;
 use MCP\DataType\Time\TimePoint;
 
 /**
@@ -17,15 +17,26 @@ use MCP\DataType\Time\TimePoint;
  */
 class Item
 {
+    const ERR_RESOURCE_UNCACHEABLE = 'Resources cannot be cached.';
+
     /**
      * @var mixed
      */
     private $data;
 
     /**
-     * @var \MCP\DataType\Time\TimePoint|null
+     * The absolute point in time the data should expire.
+     *
+     * @var TimePoint|null
      */
     private $expiry;
+
+    /**
+     * The original TTL specified by the client.
+     *
+     * @var int|null
+     */
+    private $ttl;
 
     /**
      * If provided, the data will expire at the $expiry time. If the data is
@@ -33,19 +44,23 @@ class Item
      *
      * @param mixed $data
      * @param TimePoint|null $expiry
+     * @param int|null $originalTTL
      */
-    public function __construct($data, TimePoint $expiry = null)
+    public function __construct($data, TimePoint $expiry = null, $originalTTL = null)
     {
         $this->validateCacheability($data);
 
         $this->data = $data;
+
         $this->expiry = $expiry;
+        $this->ttl = $originalTTL;
     }
 
     /**
      * If provided, the data will be checked for expiration.
      *
      * @param TimePoint|null $now
+     *
      * @return mixed
      */
     public function data(TimePoint $now = null)
@@ -58,7 +73,18 @@ class Item
     }
 
     /**
+     * Get the original TTL.
+     *
+     * @return int|null
+     */
+    public function ttl()
+    {
+        return $this->ttl;
+    }
+
+    /**
      * @param TimePoint $now
+     *
      * @return boolean
      */
     private function isExpired(TimePoint $now)
@@ -81,7 +107,7 @@ class Item
     private function validateCacheability($value)
     {
         if (is_resource($value)) {
-            throw new InvalidArgumentException('Resources cannot be cached.');
+            throw new Exception(self::ERR_RESOURCE_UNCACHEABLE);
         }
     }
 }

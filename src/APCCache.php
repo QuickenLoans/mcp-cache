@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
@@ -8,6 +8,9 @@
 namespace MCP\Cache;
 
 use MCP\Cache\Item\Item;
+use MCP\Cache\Utility\KeySaltingTrait;
+use MCP\Cache\Utility\MaximumTTLTrait;
+use MCP\Cache\Utility\StampedeProtectionTrait;
 use MCP\DataType\Time\Clock;
 
 /**
@@ -19,66 +22,88 @@ use MCP\DataType\Time\Clock;
  */
 class APCCache implements CacheInterface
 {
+    use KeySaltingTrait;
+    use MaximumTTLTrait;
+    use StampedeProtectionTrait;
+
+    const ERR_APC_NOT_INSTALLED = 'APC must be installed to use this cache.';
+
     /**
-     * @var \MCP\DataType\Time\Clock
+     * Properties read and used by the salting trait.
+     *
+     * @var string
+     */
+    const PREFIX = 'mcp-cache';
+    const DELIMITER = '-';
+
+    /**
+     * @var Clock
      */
     private $clock;
 
     /**
-     * @var null|int
+     * An optional suffix can be provided which will be appended to the key
+     * used to store and retrieve data. This can be used to throw away cached
+     * data with a code push or other configuration change.
+     *
+     * Alternatively, if multiple applications are deployed to the same server,
+     * cached data MUST be namespaced to avoid collision.
+     *
+     * @param Clock $clock
+     * @param string|null $suffix
      */
-    private $ttl;
-
-    /**
-     * @param \MCP\DataType\Time\Clock $clock
-     */
-    public function __construct(Clock $clock)
+    public function __construct(Clock $clock = null, $suffix = null)
     {
-        $this->clock = $clock;
-        $this->ttl = null;
+        if (!function_exists('\apc_fetch')) {
+            throw new Exception(self::ERR_APC_NOT_INSTALLED);
+        }
+
+        $this->clock = $clock ?: new Clock('now', 'UTC');
+        $this->suffix = $suffix;
     }
 
     /**
-     * Get a cache value by key. When a matching entry cannot be found, null will be returned.
-     *
-     * @param string $key
-     * @return mixed|null
+     * {@inheritdoc}
      */
     public function get($key)
     {
-        $value = apc_fetch($key, $success);
+        $key = $this->salted($key, $this->suffix);
 
-        if ($success && $value instanceof Item) {
-            return $value->data($this->clock->read());
+        $item = apc_fetch($key, $success);
+
+        if (!$success || !$item instanceof Item) {
+            return null;
         }
 
-        return null;
+        $now = $this->clock->read();
+        $earlyExpiry = $this->generatePrecomputeExpiration($item, $now);
+
+        return  $item->data($earlyExpiry);
     }
 
     /**
-     * Set a value by key in the cache. Returns true on success.
-     *
-     * @param string $key
-     * @param mixed $value Anything not a resource
-     * @param int $ttl How long the data should live, in seconds
-     * @return boolean
+     * {@inheritdoc}
      */
     public function set($key, $value, $ttl = 0)
     {
-        $expires = null;
-        $ttl = $this->allowedTtl($ttl);
+        $key = $this->salted($key, $this->suffix);
 
-        // already expired, invalidate stored value and don't insert
-        if ($ttl < 0) {
+        // handle deletions
+        if ($value === null) {
             apc_delete($key);
             return true;
         }
 
+        // Get exact expiry time, if ttl desired
+        $ttl = $this->determineTTL($ttl);
+        $expiry = null;
         if ($ttl > 0) {
-            $expires = $this->clock->read()->modify(sprintf('+%d seconds', $ttl));
+            $delta = sprintf('+%d seconds', $ttl);
+            $expiry = $this->clock->read()->modify($delta);
         }
 
-        return apc_store($key, new Item($value, $expires), $ttl);
+        $item = new Item($value, $expiry, $ttl);
+        return apc_store($key, $item, $ttl);
     }
 
     /**
@@ -89,30 +114,5 @@ class APCCache implements CacheInterface
     public function clear()
     {
         return apc_clear_cache('user');
-    }
-
-    /**
-     * Set the maximum ttl in seconds
-     *
-     * @param $ttl
-     */
-    public function setMaximumTtl($ttl)
-    {
-        $this->ttl = (int)$ttl;
-    }
-
-    /**
-     * Determine the actual TTL
-     *
-     * @param $ttl
-     * @return int
-     */
-    private function allowedTtl($ttl)
-    {
-        if ($this->ttl !== null && ($ttl > $this->ttl || $ttl == 0)) {
-            return $this->ttl;
-        }
-
-        return $ttl;
     }
 }

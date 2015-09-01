@@ -19,10 +19,19 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $clock = new Clock();
+        if (!function_exists('\apc_fetch')) {
+            $this->markTestSkipped('APC not installed');
+            return;
+        }
 
-        $this->cache = new APCCache($clock);
-        $this->cache->clear();
+        apc_clear_cache('user');
+
+        $this->cache = new APCCache(new Clock);
+    }
+
+    public function tearDown()
+    {
+        apc_clear_cache('user');
     }
 
     public function testClear()
@@ -61,7 +70,12 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
 
     public function testGetImmediateExpire()
     {
-        $out = $this->cache->set('a', 'b', -1);
+        // Set data with long expiry
+        $out = $this->cache->set('a', 'b', 5);
+        $this->assertSame('b', $this->cache->get('a'));
+
+        // Set to null overrides
+        $out = $this->cache->set('a', null);
         $this->assertEquals(true, $out);
 
         $this->assertEquals(null, $this->cache->get('a'));
@@ -96,4 +110,64 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(null, $this->cache->get('a'));
     }
 
+    public function testWithStampedeProtection()
+    {
+        $cache = new APCCache(new Clock('2015-08-15 12:00:00', 'UTC'));
+        $cache->set('a', 'b', 60);
+
+        // Reset cache so we can specify a clock time some point in the future
+        // 45s (75%) until ttl expires
+        $cache = new APCCache(new Clock('2015-08-15 12:00:45', 'UTC'));
+        $cache->enableStampedeProtection();
+        $cache->setPrecomputeBeta(3);
+        $cache->setPrecomputeDelta(10);
+
+        $expired = $i = 0;
+        while ($i++ < 100) {
+            if ($cache->get('a') === null) $expired++;
+        }
+
+        // using default settings, approx 5% should expire.
+        $this->assertGreaterThanOrEqual(2, $expired);
+        $this->assertLessThanOrEqual(8, $expired);
+    }
+
+    public function testNoExpiryIgnoresStampedeProtection()
+    {
+        $cache = new APCCache(new Clock('2015-08-15 12:00:00', 'UTC'));
+        $cache->set('a', 'b');
+
+        // Reset cache so we can specify a clock time some point in the future
+        // 45s (75%) until ttl expires
+        $cache = new APCCache(new Clock('2015-08-15 12:00:59', 'UTC'));
+        $cache->enableStampedeProtection();
+
+        $expired = $i = 0;
+        while ($i++ < 100) {
+            if ($cache->get('a') === null) $expired++;
+        }
+
+        // None should expire
+        $this->assertSame(0, $expired);
+    }
+
+    /**
+     * @expectedException MCP\Cache\Exception
+     * @expectedExceptionMessage Invalid beta specified. An integer between 1 and 10 is required.
+     */
+    public function testBadBetaThrowsException()
+    {
+        $cache = new APCCache;
+        $cache->setPrecomputeBeta(3.0);
+    }
+
+    /**
+     * @expectedException MCP\Cache\Exception
+     * @expectedExceptionMessage Invalid delta specified. An integer between 1 and 100 is required.
+     */
+    public function testBadDeltaThrowsException()
+    {
+        $cache = new APCCache;
+        $cache->setPrecomputeDelta('derp');
+    }
 }
