@@ -17,17 +17,17 @@ use MCP\DataType\Time\TimePoint;
  * @see https://en.wikipedia.org/wiki/Cache_stampede#Probabilistic_early_expiration
  * @see http://www.vldb.org/pvldb/vol8/p886-vattani.pdf
  *
- * Using default settings, there is a chance of early expiration when 30% or less
+ * Using default settings, there is a chance of early expiration when 33% or less
  * of the TTL is remaining on a cached value.
  *
  * Example of how this works:
  *
- * beta = 3 (default)
+ * beta = 5 (default)
  * delta = 10% of ttl (default)
  *
  * Set a value with a ttl of 60 seconds and run 1000 tests.
  *
- * TTL left   | precentile | early expires   | percent
+ * TTL left   | percentile | hits            | percent
  * ---------- | ---------- | --------------- | -------
  * 25s        | 60%        |   0 out of 1000 | 0%
  * 20s        | 66%        |  10 out of 1000 | 1%
@@ -109,9 +109,11 @@ trait StampedeProtectionTrait
             return $now;
         }
 
-        // .4 is just a random magic number that generates good distribution of beta
-        $beta = log1p($this->precomputeBeta * 0.4);
-        $delta = $this->precomputeDelta * 0.01 * $item->ttl();
+        // In the original fetch-x algorithm, beta is usually "1"
+        // using log1p and dividing by 4 just produces a better distribution of beta
+        $beta = log1p($this->precomputeBeta / 4);
+
+        $delta = ($this->precomputeDelta / 100) * $item->ttl();
         $r = mt_rand(1, 100) / 100;
 
         // Generate expiry skew in seconds

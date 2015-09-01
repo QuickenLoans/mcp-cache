@@ -269,7 +269,7 @@ $cache = new APCCache;
 $cache->enableStampedeProtection();
 
 // Customize beta and delta (not recommended).
-$cache->setPrecomputeBeta(3);
+$cache->setPrecomputeBeta(5);
 $cache->setPrecomputeDelta(10);
 
 // use cache as normal
@@ -278,7 +278,7 @@ $cache->set('test', 'value', 60);
 
 ### Example Cache Stampede Protection
 
-Beta = `3`  
+Beta = `5`  
 Delta = `10` % of TTL
 
 Set a value with a ttl of 60 seconds and run 1000 tests.
