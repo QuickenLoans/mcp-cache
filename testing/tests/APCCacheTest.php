@@ -19,19 +19,19 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        if (!function_exists('\apc_fetch')) {
+        if (!function_exists('\apcu_fetch')) {
             $this->markTestSkipped('APC not installed');
             return;
         }
 
-        apc_clear_cache('user');
+        apcu_clear_cache('user');
 
         $this->cache = new APCCache(new Clock);
     }
 
     public function tearDown()
     {
-        apc_clear_cache('user');
+        apcu_clear_cache('user');
     }
 
     public function testClear()
@@ -116,8 +116,8 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
         $cache->set('a', 'b', 60);
 
         // Reset cache so we can specify a clock time some point in the future
-        // 45s (75%) until ttl expires
-        $cache = new APCCache(new Clock('2015-08-15 12:00:45', 'UTC'));
+        // 50s (75%) until ttl expires
+        $cache = new APCCache(new Clock('2015-08-15 12:00:50', 'UTC'));
         $cache->enableStampedeProtection();
         $cache->setPrecomputeBeta(3);
         $cache->setPrecomputeDelta(10);

@@ -38,7 +38,7 @@
         "phpunit/phpunit": "4.*",
         "phpunit/php-invoker": "*",
         "predis/predis": "*",
-        "ext-apc": "*"
+        "ext-apcu": "*"
     },
     "suggest": {
         "predis/predis": "Required if using Redis Cache.",

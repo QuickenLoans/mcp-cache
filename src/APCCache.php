@@ -54,7 +54,7 @@ class APCCache implements CacheInterface
      */
     public function __construct(Clock $clock = null, $suffix = null)
     {
-        if (!function_exists('\apc_fetch')) {
+        if (!function_exists('\apcu_cache_info')) {
             throw new Exception(self::ERR_APC_NOT_INSTALLED);
         }
 
@@ -69,7 +69,7 @@ class APCCache implements CacheInterface
     {
         $key = $this->salted($key, $this->suffix);
 
-        $item = apc_fetch($key, $success);
+        $item = apcu_fetch($key, $success);
 
         if (!$success || !$item instanceof Item) {
             return null;
@@ -78,7 +78,7 @@ class APCCache implements CacheInterface
         $now = $this->clock->read();
         $earlyExpiry = $this->generatePrecomputeExpiration($item, $now);
 
-        return  $item->data($earlyExpiry);
+        return $item->data($earlyExpiry);
     }
 
     /**
@@ -90,7 +90,7 @@ class APCCache implements CacheInterface
 
         // handle deletions
         if ($value === null) {
-            apc_delete($key);
+            apcu_delete($key);
             return true;
         }
 
@@ -103,7 +103,7 @@ class APCCache implements CacheInterface
         }
 
         $item = new Item($value, $expiry, $ttl);
-        return apc_store($key, $item, $ttl);
+        return apcu_store($key, $item, $ttl);
     }
 
     /**
@@ -113,6 +113,6 @@ class APCCache implements CacheInterface
      */
     public function clear()
     {
-        return apc_clear_cache('user');
+        return apcu_clear_cache('user');
     }
 }
