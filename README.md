@@ -11,6 +11,8 @@ Caching standard for MCP services.
     * [SkeletorSessionCache](#skeletorsessioncache)
     * [PredisCache](#prediscache)
     * [APCCache](#apccache)
+    * [MemcachedCache](#memcachedcache)
+    * [MemcacheCache](#memcachecache)
 * [Stampede Protection](#stampede-protection)
 
 ## Installation
@@ -294,3 +296,14 @@ TTL left   | percentile | early expires   | percent
 References:
 - [https://en.wikipedia.org/wiki/Cache_stampede#Probabilistic_early_expiration](https://en.wikipedia.org/wiki/Cache_stampede#Probabilistic_early_expiration)
 - [http://www.vldb.org/pvldb/vol8/p886-vattani.pdf](http://www.vldb.org/pvldb/vol8/p886-vattani.pdf)
+
+
+### MemcachedCache
+
+This cache will store data in memcached using [pecl-memcached](https://github.com/php-memcached-dev/php-memcached).
+It is also compatible with [AWS ElastiCache Cluster Client](https://github.com/awslabs/aws-elasticache-cluster-client-memcached-for-php),
+a drop-in replacement for `pecl-memcache` with support for autodiscovery.
+
+### MemcacheCache
+
+This cache will store data in memcached using [pecl-memcache](https://github.com/php-memcached-dev/php-memcache).
