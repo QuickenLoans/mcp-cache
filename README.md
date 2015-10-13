@@ -4,16 +4,17 @@ Caching standard for MCP services.
 
 ## Contents
 
-* [Usage](#usage)
-* [Installation](#installation)
-* [Implementations](#implementations)
-    * [MemoryCache](#memorycache)
-    * [SkeletorSessionCache](#skeletorsessioncache)
-    * [PredisCache](#prediscache)
-    * [APCCache](#apccache)
-    * [MemcachedCache](#memcachedcache)
-    * [MemcacheCache](#memcachecache)
-* [Stampede Protection](#stampede-protection)
+- [Usage](#usage)
+    - [CachingTrait](#cachingtrait)
+- [Installation](#installation)
+- [Implementations](#implementations)
+    - [MemoryCache](#memorycache)
+    - [SkeletorSessionCache](#skeletorsessioncache)
+    - [PredisCache](#prediscache)
+    - [APCCache](#apccache)
+    - [MemcachedCache](#memcachedcache)
+    - [MemcacheCache](#memcachecache)
+- [Stampede Protection](#stampede-protection)
 
 ## Installation
 
@@ -21,7 +22,7 @@ Run the following commands.
 
 ```bash
 composer config repositories.internal-composer composer http://composer
-composer require ql/mcp-cache ^2.4
+composer require ql/mcp-cache ^2.5
 ```
 
 ## Usage
@@ -37,7 +38,7 @@ public function get($key);
 Get takes any string as a key and does a lookup of the data.
 
 ##### Please Note:
-- Missing data will return null. There is no difference between a cache hit of a `null` value and a cache miss.
+- Missing data will return `null`. There is no difference between a cache hit of a `null` value and a cache miss.
 - It is not necessary to serialize objects before storage. Serialization will be optimized by each cache implementation.
 
 ### Set
@@ -52,7 +53,7 @@ Set data in the cache. A boolean will be returned to indicate whether the data w
 - Resources cannot be cached.
 - TTL is the time in seconds the data should live until expired. A time to live of `0` will never expire the data.
 
-### Convenience
+### CachingTrait
 
 The [CachingTrait](src/CachingTrait.php) is provided to make adding optional caching to your classes easy.
 
@@ -155,6 +156,8 @@ Please note that it is possible to set a *global* ttl for your class. If a ttl i
 - [SkeletorSessionCache](#skeletorsessioncache)
 - [PredisCache](#prediscache)
 - [APCCache](#apccache)
+- [MemcachedCache](#memcachedcache)
+- [MemcacheCache](#memcachecache)
 
 ### MemoryCache
 
@@ -244,6 +247,20 @@ $cache->set('key', $data, 600);
 $data = $cache->get('key');
 ```
 
+### MemcachedCache
+
+This cache will store data in memcached using [pecl-memcached](https://github.com/php-memcached-dev/php-memcached).
+It is also compatible with [AWS ElastiCache Cluster Client](https://github.com/awslabs/aws-elasticache-cluster-client-memcached-for-php),
+a drop-in replacement for `pecl-memcache` with support for autodiscovery.
+
+See [PHP.NET Memcached Book](http://php.net/manual/en/book.memcached.php)
+
+### MemcacheCache
+
+This cache will store data in memcached using [pecl-memcache](https://github.com/php-memcached-dev/php-memcache).
+
+See [PHP.NET Memcache Book](http://php.net/manual/en/book.memcache.php)
+
 ## Stampede Protection
 
 In the case of high load services, when the cache expires or is flushed may requests attempting to regenerate the
@@ -296,14 +313,3 @@ TTL left   | percentile | early expires   | percent
 References:
 - [https://en.wikipedia.org/wiki/Cache_stampede#Probabilistic_early_expiration](https://en.wikipedia.org/wiki/Cache_stampede#Probabilistic_early_expiration)
 - [http://www.vldb.org/pvldb/vol8/p886-vattani.pdf](http://www.vldb.org/pvldb/vol8/p886-vattani.pdf)
-
-
-### MemcachedCache
-
-This cache will store data in memcached using [pecl-memcached](https://github.com/php-memcached-dev/php-memcached).
-It is also compatible with [AWS ElastiCache Cluster Client](https://github.com/awslabs/aws-elasticache-cluster-client-memcached-for-php),
-a drop-in replacement for `pecl-memcache` with support for autodiscovery.
-
-### MemcacheCache
-
-This cache will store data in memcached using [pecl-memcache](https://github.com/php-memcached-dev/php-memcache).

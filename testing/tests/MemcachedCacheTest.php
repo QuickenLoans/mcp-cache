@@ -15,6 +15,7 @@ use PHPUnit_Framework_TestCase;
  * PECL Memcached 2.2.x cannot be tested without errors.
  *
  * @see https://github.com/php-memcached-dev/php-memcached/issues/126
+ * @see https://bugs.php.net/bug.php?id=66331
  */
 class MemcachedCacheTest extends PHPUnit_Framework_TestCase
 {
