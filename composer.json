@@ -4,26 +4,16 @@
     "homepage": "http://git/mcp/mcp-cache",
     "license": "proprietary",
     "authors": [
-        {
-            "name": "Steve Kluck",
-            "email": "stevekluck@quickenloans.com"
-        },
-        {
-            "name": "Matt Colf",
-            "email": "mattcolf@quickenloans.com"
-        }
+        { "name": "IT Team Web Core", "email": "itteamwebcore@quickenloans.com" }
     ],
     "archive": {
-        "exclude": [
-            "/phpunit.xml.dist",
-            "/testing"
-        ]
+        "exclude": [ "/phpunit.xml.dist", "/testing" ]
     },
     "autoload": {
         "psr-4": { "MCP\\Cache\\": "src", "MCP\\Cache\\Testing\\": "testing/src" }
     },
-    "config": {
-        "preferred-install": "dist"
+    "extra": {
+        "branch-alias": { "dev-master": "2.5.x-dev" }
     },
     "repositories": [
         { "type": "composer", "url": "http://composer/" }
@@ -33,13 +23,16 @@
         "php": ">=5.4",
         "ql/mcp-core": "~1.0"
     },
+
     "require-dev": {
         "mockery/mockery": "*",
         "phpunit/phpunit": "4.*",
         "phpunit/php-invoker": "*",
         "predis/predis": "*",
+        "psr/log": "*",
         "ext-apcu": "*"
     },
+
     "suggest": {
         "predis/predis": "Required if using Redis Cache.",
         "ext-apc": "Required if using APC Cache"

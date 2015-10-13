@@ -10,6 +10,10 @@ namespace MCP\Cache;
 use Memcache;
 
 /**
+ * PHP.NET Docs:
+ * @see http://php.net/manual/en/book.memcache.php
+ *
+ * GitHub Source:
  * @see https://github.com/php/pecl-caching-memcache
  *
  * @internal
