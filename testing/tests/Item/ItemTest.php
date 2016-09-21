@@ -7,7 +7,7 @@
 
 namespace MCP\Cache\Item;
 
-use MCP\DataType\Time\TimePoint;
+use QL\MCP\Common\Time\TimePoint;
 use PHPUnit_Framework_TestCase;
 
 class ItemTest extends PHPUnit_Framework_TestCase

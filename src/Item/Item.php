@@ -8,7 +8,7 @@
 namespace MCP\Cache\Item;
 
 use MCP\Cache\Exception;
-use MCP\DataType\Time\TimePoint;
+use QL\MCP\Common\Time\TimePoint;
 
 /**
  * This entity encapsulates expiration for cachers that do not support it natively.

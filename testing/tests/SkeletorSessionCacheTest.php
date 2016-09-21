@@ -8,8 +8,8 @@
 namespace MCP\Cache;
 
 use MCP\Cache\Item\Item;
-use MCP\DataType\Time\Clock;
-use MCP\DataType\Time\TimePoint;
+use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Time\TimePoint;
 use Mockery;
 use PHPUnit_Framework_TestCase;
 

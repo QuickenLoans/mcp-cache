@@ -9,7 +9,7 @@ namespace MCP\Cache;
 
 use MCP\Cache\Item\Item;
 use MCP\Cache\Utility\KeySaltingTrait;
-use MCP\DataType\Time\Clock;
+use QL\MCP\Common\Time\Clock;
 use Sk\Session;
 
 /**
