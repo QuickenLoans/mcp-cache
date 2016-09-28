@@ -27,17 +27,19 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
         $inputValue = ['myval' => 1];
         $expected = $inputValue;
 
+        $expectedKey = sprintf('mcp-cache-%s:mykey', CacheInterface::VERSION);
+
         $setValue = null;
         $this->predis
             ->shouldReceive('set')
-            ->with('mcp-cache:mykey', Mockery::on(function($v) use (&$setValue) {
+            ->with($expectedKey, Mockery::on(function($v) use (&$setValue) {
                 $setValue = $v;
                 return true;
             }));
 
         $this->predis
             ->shouldReceive('get')
-            ->with('mcp-cache:mykey')
+            ->with($expectedKey)
             ->andReturn(serialize($inputValue));
 
         $cache = new PredisCache($this->predis);
@@ -56,10 +58,11 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
     {
         $inputValue = new DateTime('2015-03-15 4:30:00', new DateTimeZone('UTC'));
 
+        $expectedKey = sprintf('mcp-cache-%s:test', CacheInterface::VERSION);
         $setValue = null;
         $this->predis
             ->shouldReceive('setex')
-            ->with('mcp-cache:test', 60, Mockery::on(function($v) use (&$setValue) {
+            ->with($expectedKey, 60, Mockery::on(function($v) use (&$setValue) {
                 $setValue = $v;
                 return true;
             }));
@@ -74,9 +77,10 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
 
     public function testSettingNullDeletesKeyInstead()
     {
+        $expectedKey = sprintf('mcp-cache-%s:test', CacheInterface::VERSION);
         $this->predis
             ->shouldReceive('del')
-            ->with('mcp-cache:test')
+            ->with($expectedKey)
             ->once();
 
         $cache = new PredisCache($this->predis);
@@ -87,9 +91,11 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
 
     public function testKeyIsSalted()
     {
+        $expectedKey = sprintf('mcp-cache-%s:test:salty', CacheInterface::VERSION);
+
         $this->predis
             ->shouldReceive('get')
-            ->with('mcp-cache:test:salty')
+            ->with($expectedKey)
             ->andReturnNull()
             ->once();
 
@@ -102,10 +108,12 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
 
     public function testMaxTTLisUsedIfNoTtlIsProvidedAtRuntime()
     {
+        $expectedKey = sprintf('mcp-cache-%s:test', CacheInterface::VERSION);
         $setValue = null;
+
         $this->predis
             ->shouldReceive('setex')
-            ->with('mcp-cache:test', 60, Mockery::on(function($v) use (&$setValue) {
+            ->with($expectedKey, 60, Mockery::on(function($v) use (&$setValue) {
                 $setValue = $v;
                 return true;
             }));
@@ -122,10 +130,11 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
 
     public function testMaxTTLisUsedIfRuntimeExpirationExceedsMaxValue()
     {
+        $expectedKey = sprintf('mcp-cache-%s:test', CacheInterface::VERSION);
         $setValue = null;
         $this->predis
             ->shouldReceive('setex')
-            ->with('mcp-cache:test', 60, Mockery::on(function($v) use (&$setValue) {
+            ->with($expectedKey, 60, Mockery::on(function($v) use (&$setValue) {
                 $setValue = $v;
                 return true;
             }));

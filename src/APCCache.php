@@ -33,7 +33,7 @@ class APCCache implements CacheInterface
      *
      * @var string
      */
-    const PREFIX = 'mcp-cache';
+    const PREFIX = 'mcp-cache-' . CacheInterface::VERSION;
     const DELIMITER = '-';
 
     /**

@@ -30,10 +30,12 @@ class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
         $key = 'key-name';
         $value = 'whatever';
 
+        $expectedKey = sprintf('mcp-cache-%s-key-name', CacheInterface::VERSION);
+
         $item = null;
         $this->session
             ->shouldReceive('set')
-            ->with('mcp-cache-key-name', Mockery::on(function($v) use (&$item) {
+            ->with($expectedKey, Mockery::on(function($v) use (&$item) {
                 $item = $v;
                 return true;
             }));
@@ -46,10 +48,12 @@ class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
 
     public function testSettingWithTtlStoresItemWithTimePoint()
     {
+        $expectedKey = sprintf('mcp-cache-%s-key-name', CacheInterface::VERSION);
+
         $item = null;
         $this->session
             ->shouldReceive('set')
-            ->with('mcp-cache-key-name', Mockery::on(function($v) use (&$item) {
+            ->with($expectedKey, Mockery::on(function($v) use (&$item) {
                 $item = $v;
                 return true;
             }));
@@ -61,14 +65,19 @@ class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($item->data());
 
         // not expired
-        $this->assertNotNull($item->data(new TimePoint(2014, 4, 1, 12, 0, 0, 'UTC')));
-        $this->assertNotNull($item->data(new TimePoint(2014, 4, 1, 12, 2, 6, 'UTC')));
+        $data = $item->data($this->clock->fromString('2014-04-01T12:00:00Z'));
+        $this->assertNotNull($data);
+
+        $data = $item->data($this->clock->fromString('2014-04-01T12:02:06Z'));
+        $this->assertNotNull($data);
 
         // expired at exact time
-        $this->assertNull($item->data(new TimePoint(2014, 4, 1, 12, 2, 7, 'UTC')));
+        $data = $item->data($this->clock->fromString('2014-04-01T12:02:07Z'));
+        $this->assertNull($data);
 
         // expired after time
-        $this->assertNull($item->data(new TimePoint(2014, 4, 1, 12, 2, 8, 'UTC')));
+        $data = $item->data($this->clock->fromString('2014-04-01T12:02:08Z'));
+        $this->assertNull($data);
     }
 
     public function testSkeletorSessionCacheCacheGettingKeyThatWasNotSetReturnsNull()
@@ -87,12 +96,14 @@ class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
 
     public function testCacheKeyIsBuiltCorrectlyWhenSuffixed()
     {
+        $expectedKey = sprintf('mcp-cache-%s-KEY-suffix', CacheInterface::VERSION);
+
         $this->session
             ->shouldReceive('get')
-            ->with('mcp-cache-KEY-suffix');
+            ->with($expectedKey);
         $this->session
             ->shouldReceive('set')
-            ->with('mcp-cache-KEY-suffix', Mockery::any());
+            ->with($expectedKey, Mockery::any());
 
         $cache = new SkeletorSessionCache($this->session, $this->clock, 'suffix');
         $cache->get('KEY');
