@@ -4,9 +4,9 @@ Caching standard for MCP services.
 
 ## Contents
 
+- [Installation](#installation)
 - [Usage](#usage)
     - [CachingTrait](#cachingtrait)
-- [Installation](#installation)
 - [Implementations](#implementations)
     - [MemoryCache](#memorycache)
     - [SkeletorSessionCache](#skeletorsessioncache)
@@ -22,7 +22,7 @@ Run the following commands.
 
 ```bash
 composer config repositories.internal-composer composer http://composer
-composer require ql/mcp-cache ^2.5
+composer require ql/mcp-cache ~3.0
 ```
 
 ## Usage
@@ -121,18 +121,19 @@ class MyRepo
 }
 ```
 
-Setup example: Symfony DI:
+Setup example for **Symfony DI**:
 ```
-cache:
-    class: 'MCP\Cache\PredisCache'
-    arguments: [@predis]
-repo:
-    class: 'MyRepo'
-    calls:
-        - ['setCache', [@cache]]
-        - ['setCacheTTL', [3600]]
+services:
+    cache:
+        class: 'MCP\Cache\PredisCache'
+        arguments: ['@predis']
+    repo:
+        class: 'MyRepo'
+        calls:
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', [3600]]
 ```
-Setup example: PHP:
+Setup example for **PHP**:
 ```php
 $cacher = new PredisCache($predis);
 
@@ -185,7 +186,7 @@ between code pushes or other configuration changes.
 
 ```php
 use MCP\Cache\SkeletorSessionCache;
-use MCP\DataType\Time\Clock;
+use QL\MCP\Common\Time\Clock;
 
 $clock = new Clock('now', 'UTC');
 $suffix = '6038aa7'; // optional
@@ -230,7 +231,7 @@ This cache will store items in the APC user cache space. Optionally, a maximum T
 
 ```php
 use MCP\Cache\APCCache;
-use MCP\DataType\Time\Clock;
+use QL\MCP\Common\Time\Clock;
 
 $cache = new APCCache(new Clock());
 
