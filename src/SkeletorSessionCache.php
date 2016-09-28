@@ -5,10 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
-use MCP\Cache\Item\Item;
-use MCP\Cache\Utility\KeySaltingTrait;
+use QL\MCP\Cache\Item\Item;
+use QL\MCP\Cache\Utility\KeySaltingTrait;
 use QL\MCP\Common\Time\Clock;
 use Sk\Session;
 

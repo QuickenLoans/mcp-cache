@@ -5,12 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
 use DateTime;
 use DateTimeZone;
 use Mockery;
 use PHPUnit_Framework_TestCase;
+use Predis\Client;
 
 class PredisCacheTest extends PHPUnit_Framework_TestCase
 {
@@ -18,7 +19,7 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->predis = Mockery::mock('Predis\Client');
+        $this->predis = Mockery::mock(Client::class);
     }
 
     public function testSettingAKeyAndGetSameKeyResultsInOriginalValue()

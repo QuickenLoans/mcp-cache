@@ -5,9 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache\Item;
+namespace QL\MCP\Cache\Item;
 
-use MCP\Cache\Exception;
+use QL\MCP\Cache\Exception;
 use QL\MCP\Common\Time\TimePoint;
 
 /**

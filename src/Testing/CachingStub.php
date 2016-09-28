@@ -5,9 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache\Testing;
+namespace QL\MCP\Cache\Testing;
 
-use MCP\Cache\CachingTrait;
+use QL\MCP\Cache\CachingTrait;
 
 /**
  * @codeCoverageIgnore

@@ -5,8 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
+use QL\MCP\Cache\Exception as CacheException;
 use QL\MCP\Common\Time\Clock;
 use PHPUnit_Framework_TestCase;
 
@@ -16,6 +17,11 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
      * @var APCCache
      */
     private $cache;
+
+    public function buildFixedClock($time)
+    {
+        return new Clock($time, 'UTC');
+    }
 
     public function setUp()
     {
@@ -114,12 +120,14 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
 
     public function testWithStampedeProtection()
     {
-        $cache = new APCCache(new Clock('2015-08-15 12:00:00', 'UTC'));
+        $clock = $this->buildFixedClock('2015-08-15 12:00:00');
+        $cache = new APCCache($clock);
         $cache->set('a', 'b', 60);
 
         // Reset cache so we can specify a clock time some point in the future
         // 50s (75%) until ttl expires
-        $cache = new APCCache(new Clock('2015-08-15 12:00:50', 'UTC'));
+        $clock = $this->buildFixedClock('2015-08-15 12:00:50');
+        $cache = new APCCache($clock);
         $cache->enableStampedeProtection();
         $cache->setPrecomputeBeta(3);
         $cache->setPrecomputeDelta(10);
@@ -136,12 +144,14 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
 
     public function testNoExpiryIgnoresStampedeProtection()
     {
-        $cache = new APCCache(new Clock('2015-08-15 12:00:00', 'UTC'));
+        $clock = $this->buildFixedClock('2015-08-15 12:00:00');
+        $cache = new APCCache($clock);
         $cache->set('a', 'b');
 
         // Reset cache so we can specify a clock time some point in the future
         // 45s (75%) until ttl expires
-        $cache = new APCCache(new Clock('2015-08-15 12:00:59', 'UTC'));
+        $clock = $this->buildFixedClock('2015-08-15 12:00:59');
+        $cache = new APCCache($clock);
         $cache->enableStampedeProtection();
 
         $expired = $i = 0;
@@ -153,22 +163,20 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
         $this->assertSame(0, $expired);
     }
 
-    /**
-     * @expectedException MCP\Cache\Exception
-     * @expectedExceptionMessage Invalid beta specified. An integer between 1 and 10 is required.
-     */
     public function testBadBetaThrowsException()
     {
+        $this->expectException(CacheException::class);
+        $this->expectExceptionMessage('Invalid beta specified. An integer between 1 and 10 is required.');
+
         $cache = new APCCache;
         $cache->setPrecomputeBeta(3.0);
     }
 
-    /**
-     * @expectedException MCP\Cache\Exception
-     * @expectedExceptionMessage Invalid delta specified. An integer between 1 and 100 is required.
-     */
     public function testBadDeltaThrowsException()
     {
+        $this->expectException(CacheException::class);
+        $this->expectExceptionMessage('Invalid delta specified. An integer between 1 and 100 is required.');
+
         $cache = new APCCache;
         $cache->setPrecomputeDelta('derp');
     }

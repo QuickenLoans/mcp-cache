@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache\Utility;
+namespace QL\MCP\Cache\Utility;
 
 /**
  * Allow a cacher to specify a maximum TTL for cached data.

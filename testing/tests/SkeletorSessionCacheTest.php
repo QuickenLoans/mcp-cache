@@ -5,13 +5,14 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
-use MCP\Cache\Item\Item;
+use QL\MCP\Cache\Item\Item;
 use QL\MCP\Common\Time\Clock;
 use QL\MCP\Common\Time\TimePoint;
 use Mockery;
 use PHPUnit_Framework_TestCase;
+use Sk\Session;
 
 class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
 {
@@ -20,7 +21,7 @@ class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->session = Mockery::mock('Sk\Session');
+        $this->session = Mockery::mock(Session::class);
         $this->clock = new Clock('2014-04-01 12:00:00', 'UTC');
     }
 
@@ -40,7 +41,7 @@ class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
         $cache = new SkeletorSessionCache($this->session, $this->clock);
         $cache->set($key, $value);
 
-        $this->assertInstanceOf('MCP\Cache\Item\Item', $item);
+        $this->assertInstanceOf(Item::class, $item);
     }
 
     public function testSettingWithTtlStoresItemWithTimePoint()
@@ -121,6 +122,5 @@ class SkeletorSessionCacheTest extends PHPUnit_Framework_TestCase
         $cache->set($key, $value);
 
         $this->assertEquals($value, $cache->get($key));
-
     }
 }

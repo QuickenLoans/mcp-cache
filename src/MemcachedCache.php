@@ -5,10 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
-use MCP\Cache\Utility\KeySaltingTrait;
-use MCP\Cache\Utility\MaximumTTLTrait;
+use QL\MCP\Cache\Utility\KeySaltingTrait;
+use QL\MCP\Cache\Utility\MaximumTTLTrait;
 use Memcached;
 use Psr\Log\LoggerInterface;
 

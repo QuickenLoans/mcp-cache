@@ -5,10 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache\Utility;
+namespace QL\MCP\Cache\Utility;
 
-use MCP\Cache\Item\Item;
-use MCP\Cache\Exception;
+use QL\MCP\Cache\Item\Item;
+use QL\MCP\Cache\Exception;
 use QL\MCP\Common\Time\TimePoint;
 
 /**

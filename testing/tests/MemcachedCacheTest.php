@@ -5,9 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
-use MCP\Cache\Testing\MemoryLogger;
+use QL\MCP\Cache\Testing\MemoryLogger;
 use Memcached;
 use PHPUnit_Framework_TestCase;
 
@@ -32,7 +32,7 @@ class MemcachedCacheTest extends PHPUnit_Framework_TestCase
 
         $cache = new MemcachedCache($memcached);
 
-        $this->assertInstanceOf(MemcachedCache::CLASS, $cache);
+        $this->assertInstanceOf(MemcachedCache::class, $cache);
     }
 
     public function testNoServersDontCare()

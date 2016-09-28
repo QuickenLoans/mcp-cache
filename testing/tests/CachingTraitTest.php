@@ -5,10 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
 use PHPUnit_Framework_TestCase;
-use MCP\Cache\Testing\CachingStub;
+use QL\MCP\Cache\Testing\CachingStub;
 use Mockery;
 
 class CachingTraitTest extends PHPUnit_Framework_TestCase
@@ -17,7 +17,7 @@ class CachingTraitTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->cache = Mockery::mock('MCP\Cache\CacheInterface');
+        $this->cache = Mockery::mock(CacheInterface::class);
     }
 
     public function testCacheAccessor()

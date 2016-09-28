@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
-use MCP\Cache\Item\Item;
-use MCP\Cache\Utility\KeySaltingTrait;
-use MCP\Cache\Utility\MaximumTTLTrait;
-use MCP\Cache\Utility\StampedeProtectionTrait;
+use QL\MCP\Cache\Item\Item;
+use QL\MCP\Cache\Utility\KeySaltingTrait;
+use QL\MCP\Cache\Utility\MaximumTTLTrait;
+use QL\MCP\Cache\Utility\StampedeProtectionTrait;
 use QL\MCP\Common\Time\Clock;
 
 /**

@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache\Utility;
+namespace QL\MCP\Cache\Utility;
 
 /**
  * If using this trait, an optional class constant "PREFIX" can be used to

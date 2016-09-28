@@ -10,7 +10,7 @@
         "exclude": [ "/phpunit.xml.dist", "/testing", "/src/Testing" ]
     },
     "autoload": {
-        "psr-4": { "MCP\\Cache\\": "src" }
+        "psr-4": { "QL\\MCP\\Cache\\": "src" }
     },
 
     "require": {
@@ -20,7 +20,7 @@
 
     "require-dev": {
         "mockery/mockery": "*",
-        "phpunit/phpunit": "4.*",
+        "phpunit/phpunit": "~5.0",
         "phpunit/php-invoker": "*",
         "predis/predis": "*",
         "psr/log": "*",

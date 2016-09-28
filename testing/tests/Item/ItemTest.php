@@ -5,13 +5,22 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache\Item;
+namespace QL\MCP\Cache\Item;
 
+use QL\MCP\Cache\Exception as CacheException;
+use QL\MCP\Common\Time\Clock;
 use QL\MCP\Common\Time\TimePoint;
 use PHPUnit_Framework_TestCase;
 
 class ItemTest extends PHPUnit_Framework_TestCase
 {
+    public $clock;
+
+    public function setUp()
+    {
+        $this->clock = new Clock;
+    }
+
     public function testItemWithoutExpiryDoesNotExpire()
     {
         $item = new Item('data');
@@ -20,7 +29,7 @@ class ItemTest extends PHPUnit_Framework_TestCase
 
     public function testItemDataNotExpiredIfCurrentTimeProvidedButNoExpirySet()
     {
-        $accessed = new TimePoint(2014, 4, 1, 11, 0, 0, 'UTC');
+        $accessed = $this->clock->fromString('2014-04-01T11:00:00Z');
 
         $item = new Item('data');
         $this->assertSame('data', $item->data($accessed));
@@ -28,7 +37,8 @@ class ItemTest extends PHPUnit_Framework_TestCase
 
     public function testItemWithExpiryDoesNotExpireIfNoCurrentTimeProvided()
     {
-        $expiry = new TimePoint(2014, 4, 1, 12, 0, 0, 'UTC');
+        $expiry = $this->clock->fromString('2014-04-01T12:00:00Z');
+
         $item = new Item('data', $expiry);
 
         $this->assertSame('data', $item->data());
@@ -36,8 +46,8 @@ class ItemTest extends PHPUnit_Framework_TestCase
 
     public function testItemDataNotExpired()
     {
-        $expiry = new TimePoint(2014, 4, 1, 12, 0, 0, 'UTC');
-        $accessed = new TimePoint(2014, 4, 1, 11, 0, 0, 'UTC');
+        $expiry = $this->clock->fromString('2014-04-01T12:00:00Z');
+        $accessed = $this->clock->fromString('2014-04-01T11:00:00Z');
 
         $item = new Item('data', $expiry);
         $this->assertSame('data', $item->data($accessed));
@@ -45,8 +55,8 @@ class ItemTest extends PHPUnit_Framework_TestCase
 
     public function testItemDataExpired()
     {
-        $expiry = new TimePoint(2014, 4, 1, 12, 0, 0, 'UTC');
-        $accessed = new TimePoint(2014, 4, 1, 13, 0, 0, 'UTC');
+        $expiry = $this->clock->fromString('2014-04-01T12:00:00Z');
+        $accessed = $this->clock->fromString('2014-04-01T13:00:00Z');
 
         $item = new Item('data', $expiry);
         $this->assertSame(null, $item->data($accessed));
@@ -54,18 +64,17 @@ class ItemTest extends PHPUnit_Framework_TestCase
 
     public function testTTLisStoredInOriginalForm()
     {
-        $expiry = new TimePoint(2014, 4, 1, 12, 0, 0, 'UTC');
+        $expiry = $this->clock->fromString('2014-04-01T12:00:00Z');
 
         $item = new Item('data', $expiry, 3600);
         $this->assertSame(3600, $item->ttl());
     }
 
-    /**
-     * @expectedException MCP\Cache\Exception
-     * @expectedExceptionMessage Resources cannot be cached
-     */
     public function testCachingResourceBlowsUp()
     {
+        $this->expectException(CacheException::class);
+        $this->expectExceptionMessage('Resources cannot be cached');
+
         new Item(fopen('php://stdout', 'w'));
     }
 }
