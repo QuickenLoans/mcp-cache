@@ -12,6 +12,8 @@ namespace MCP\Cache;
  */
 interface CacheInterface
 {
+    const VERSION = '3.0.0';
+
     /**
      * @param string $key
      *
