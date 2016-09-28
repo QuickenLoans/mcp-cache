@@ -12,15 +12,9 @@
     "autoload": {
         "psr-4": { "MCP\\Cache\\": "src", "MCP\\Cache\\Testing\\": "testing/src" }
     },
-    "extra": {
-        "branch-alias": { "dev-master": "2.5.x-dev" }
-    },
-    "repositories": [
-        { "type": "composer", "url": "http://composer/" }
-    ],
 
     "require": {
-        "php": ">=5.4",
+        "php": "~5.6 || ~7.0",
         "ql/mcp-common": "~1.0"
     },
 
