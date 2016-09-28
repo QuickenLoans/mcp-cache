@@ -15,4 +15,9 @@ echo ; echo
 ./composer show --platform
 
 echo ; echo
+if [ -f "/etc/php.ini" ] ; then
+    echo 'apc.enable_cli=1' >> "/etc/php.ini"
+fi
+
+echo ; echo
 ./composer exec phpunit

@@ -115,6 +115,6 @@ class APCCache implements CacheInterface
      */
     public function clear()
     {
-        return apcu_clear_cache('user');
+        return apcu_clear_cache();
     }
 }

@@ -27,6 +27,11 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
             return;
         }
 
+        if (!ini_get('apc.enabled') || !ini_get('apc.enable_cli')) {
+            $this->markTestSkipped('ext-apcu is not enabled');
+            return;
+        }
+
         apcu_clear_cache();
 
         $this->clock = new Clock('now', 'UTC');
