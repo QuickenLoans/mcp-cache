@@ -7,7 +7,7 @@
 
 namespace MCP\Cache;
 
-use MCP\DataType\Time\Clock;
+use QL\MCP\Common\Time\Clock;
 use PHPUnit_Framework_TestCase;
 
 class APCCacheTest extends PHPUnit_Framework_TestCase

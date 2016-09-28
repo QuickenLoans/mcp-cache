@@ -9,7 +9,7 @@ namespace MCP\Cache\Utility;
 
 use MCP\Cache\Item\Item;
 use MCP\Cache\Exception;
-use MCP\DataType\Time\TimePoint;
+use QL\MCP\Common\Time\TimePoint;
 
 /**
  * Add stampede protection through probabilistic early expiration.
