@@ -7,10 +7,10 @@
         { "name": "IT Team Web Core", "email": "itteamwebcore@quickenloans.com" }
     ],
     "archive": {
-        "exclude": [ "/phpunit.xml.dist", "/testing" ]
+        "exclude": [ "/phpunit.xml.dist", "/testing", "/src/Testing" ]
     },
     "autoload": {
-        "psr-4": { "MCP\\Cache\\": "src", "MCP\\Cache\\Testing\\": "testing/src" }
+        "psr-4": { "MCP\\Cache\\": "src" }
     },
 
     "require": {

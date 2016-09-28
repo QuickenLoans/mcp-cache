@@ -12,7 +12,7 @@ use MCP\Cache\CachingTrait;
 /**
  * @codeCoverageIgnore
  */
-class Caching
+class CachingStub
 {
     use CachingTrait {
         cache as public;
