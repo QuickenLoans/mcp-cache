@@ -109,6 +109,8 @@ class APCCache implements CacheInterface
     /**
      * Clear the cache
      *
+     * WARNING: Nonstandard method.
+     *
      * @return bool
      */
     public function clear()

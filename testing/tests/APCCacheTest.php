@@ -13,10 +13,7 @@ use PHPUnit_Framework_TestCase;
 
 class APCCacheTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @var APCCache
-     */
-    private $cache;
+    public $clock;
 
     public function buildFixedClock($time)
     {
@@ -25,68 +22,68 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        if (!function_exists('\apcu_fetch')) {
-            $this->markTestSkipped('APC not installed');
+        if (!extension_loaded('apcu')) {
+            $this->markTestSkipped('ext-apcu is not installed');
             return;
         }
 
         apcu_clear_cache('user');
 
-        $this->cache = new APCCache(new Clock);
+        $this->clock = new Clock('now', 'UTC');
     }
 
     public function tearDown()
     {
-        if (!function_exists('\apcu_fetch')) {
-            apcu_clear_cache('user');
+        if (!extension_loaded('apcu')) {
+            return;
         }
-    }
 
-    public function testClear()
-    {
-        $this->cache->set('a', 'b');
-
-        $out = $this->cache->clear();
-        $this->assertEquals(true, $out);
-
-        $this->assertEquals(null, $this->cache->get('a'));
+        apcu_clear_cache('user');
     }
 
     public function testSet()
     {
-        $out = $this->cache->set('a', 'b');
+        $cache = new APCCache($this->clock);
+
+        $out = $cache->set('a', 'b');
         $this->assertEquals(true, $out);
 
-        $this->assertEquals('b', $this->cache->get('a'));
+        $this->assertEquals('b', $cache->get('a'));
     }
 
     public function testSetOverwrite()
     {
-        $out = $this->cache->set('a', 'b');
+        $cache = new APCCache($this->clock);
+
+        $out = $cache->set('a', 'b');
         $this->assertEquals(true, $out);
 
-        $out = $this->cache->set('a', 'c');
+        $out = $cache->set('a', 'c');
         $this->assertEquals(true, $out);
 
-        $this->assertEquals('c', $this->cache->get('a'));
+        $this->assertEquals('c', $cache->get('a'));
     }
 
     public function testGetNotExist()
     {
-        $this->assertEquals(null, $this->cache->get('a'));
+        $cache = new APCCache($this->clock);
+
+        $this->assertEquals(null, $cache->get('a'));
     }
 
     public function testGetImmediateExpire()
     {
+        $cache = new APCCache($this->clock);
+
         // Set data with long expiry
-        $out = $this->cache->set('a', 'b', 5);
-        $this->assertSame('b', $this->cache->get('a'));
+        $out = $cache->set('a', 'b', 5);
+        $this->assertSame('b', $cache->get('a'));
 
         // Set to null overrides
-        $out = $this->cache->set('a', null);
+        $out = $cache->set('a', null);
         $this->assertEquals(true, $out);
 
-        $this->assertEquals(null, $this->cache->get('a'));
+        $this->assertEquals(null, $cache->get('a'));
     }
 
     /**
@@ -94,13 +91,15 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
      */
     public function testGetExpired()
     {
-        $out = $this->cache->set('a', 'b', 1);
+        $cache = new APCCache($this->clock);
+
+        $out = $cache->set('a', 'b', 1);
         $this->assertEquals(true, $out);
 
         // sleep until expired
         sleep(2);
 
-        $this->assertEquals(null, $this->cache->get('a'));
+        $this->assertEquals(null, $cache->get('a'));
     }
 
     /**
@@ -108,14 +107,27 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
      */
     public function testUseMaxTtl()
     {
-        $this->cache->setMaximumTtl(1);
-        $out = $this->cache->set('a', 'b', 10);
+        $cache = new APCCache($this->clock);
+
+        $cache->setMaximumTtl(1);
+        $out = $cache->set('a', 'b', 10);
         $this->assertEquals(true, $out);
 
         // sleep until expired
         sleep(2);
 
-        $this->assertEquals(null, $this->cache->get('a'));
+        $this->assertEquals(null, $cache->get('a'));
+    }
+
+    public function testClear()
+    {
+        $cache = new APCCache($this->clock);
+        $cache->set('a', 'b');
+
+        $out = $cache->clear();
+        $this->assertEquals(true, $out);
+
+        $this->assertEquals(null, $cache->get('a'));
     }
 
     public function testWithStampedeProtection()

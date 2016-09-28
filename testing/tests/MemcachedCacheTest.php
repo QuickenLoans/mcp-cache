@@ -21,7 +21,7 @@ class MemcachedCacheTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        if (!class_exists('Memcached')) {
+        if (!extension_loaded('memcached')) {
             $this->markTestSkipped('pecl-memcached is not installed.');
         }
     }

@@ -13,6 +13,13 @@ use PHPUnit_Framework_TestCase;
 
 class MemcacheCacheTest extends PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        if (!extension_loaded('memcache')) {
+            $this->markTestSkipped('pecl-memcache is not installed');
+        }
+    }
+
     public function testSettingAKeyWithoutExpirationUsesZeroAsDefault()
     {
         $memcache = Mockery::mock(Memcache::CLASS);
