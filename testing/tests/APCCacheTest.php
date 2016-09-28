@@ -31,7 +31,9 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        apcu_clear_cache('user');
+        if (!function_exists('\apcu_fetch')) {
+            apcu_clear_cache('user');
+        }
     }
 
     public function testClear()
