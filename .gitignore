@@ -1,15 +1,7 @@
 # miscellaneous
-phpunit.xml
-phpunit
-
-# ide specific configuration
-*.swo
-*.swp
-.idea
-
-# build directory
-/build/
+/phpunit.xml
+/phpunit/
 
 # package installation
-composer.lock
+/composer.lock
 /vendor/
