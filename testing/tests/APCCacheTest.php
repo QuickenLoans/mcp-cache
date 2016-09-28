@@ -13,6 +13,8 @@ use PHPUnit_Framework_TestCase;
 
 class APCCacheTest extends PHPUnit_Framework_TestCase
 {
+    const STAMPEDE_RUNS = 1000;
+
     public $clock;
 
     public function buildFixedClock($time)
@@ -150,13 +152,13 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
         $cache->setPrecomputeDelta(10);
 
         $expired = $i = 0;
-        while ($i++ < 100) {
+        while ($i++ < self::STAMPEDE_RUNS) {
             if ($cache->get('a') === null) $expired++;
         }
 
         // using default settings, approx 5% should expire.
-        $this->assertGreaterThanOrEqual(2, $expired);
-        $this->assertLessThanOrEqual(8, $expired);
+        $this->assertGreaterThanOrEqual(self::STAMPEDE_RUNS * .02, $expired);
+        $this->assertLessThanOrEqual(self::STAMPEDE_RUNS * .08, $expired);
     }
 
     public function testNoExpiryIgnoresStampedeProtection()
@@ -172,7 +174,7 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
         $cache->enableStampedeProtection();
 
         $expired = $i = 0;
-        while ($i++ < 100) {
+        while ($i++ < self::STAMPEDE_RUNS) {
             if ($cache->get('a') === null) $expired++;
         }
 
