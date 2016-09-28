@@ -54,7 +54,7 @@ class APCCache implements CacheInterface
      */
     public function __construct(Clock $clock = null, $suffix = null)
     {
-        if (!function_exists('\apcu_cache_info')) {
+        if (!extension_loaded('apcu')) {
             throw new Exception(self::ERR_APC_NOT_INSTALLED);
         }
 

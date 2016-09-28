@@ -27,7 +27,7 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
             return;
         }
 
-        apcu_clear_cache('user');
+        apcu_clear_cache();
 
         $this->clock = new Clock('now', 'UTC');
     }
@@ -38,7 +38,7 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
             return;
         }
 
-        apcu_clear_cache('user');
+        apcu_clear_cache();
     }
 
     public function testSet()
