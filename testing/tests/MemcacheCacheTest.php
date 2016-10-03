@@ -1,11 +1,11 @@
 <?php
 /**
- * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
- *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
- *    is strictly prohibited.
+ * @copyright (c) 2016 Quicken Loans Inc.
+ *
+ * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
 use Memcache;
 use Mockery;
@@ -13,6 +13,13 @@ use PHPUnit_Framework_TestCase;
 
 class MemcacheCacheTest extends PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        if (!extension_loaded('memcache')) {
+            $this->markTestSkipped('pecl-memcache is not installed');
+        }
+    }
+
     public function testSettingAKeyWithoutExpirationUsesZeroAsDefault()
     {
         $memcache = Mockery::mock(Memcache::CLASS);

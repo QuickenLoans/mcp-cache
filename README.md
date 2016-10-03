@@ -4,9 +4,9 @@ Caching standard for MCP services.
 
 ## Contents
 
+- [Installation](#installation)
 - [Usage](#usage)
     - [CachingTrait](#cachingtrait)
-- [Installation](#installation)
 - [Implementations](#implementations)
     - [MemoryCache](#memorycache)
     - [SkeletorSessionCache](#skeletorsessioncache)
@@ -22,7 +22,7 @@ Run the following commands.
 
 ```bash
 composer config repositories.internal-composer composer http://composer
-composer require ql/mcp-cache ^2.5
+composer require ql/mcp-cache ~3.0
 ```
 
 ## Usage
@@ -57,7 +57,7 @@ Set data in the cache. A boolean will be returned to indicate whether the data w
 
 The [CachingTrait](src/CachingTrait.php) is provided to make adding optional caching to your classes easy.
 
-`MCP\Cache\CachingTrait` adds the following private methods to your trait consumer:
+`QL\MCP\Cache\CachingTrait` adds the following private methods to your trait consumer:
 
 ```php
 /**
@@ -100,7 +100,7 @@ public function setCacheTTL($ttl);
 Here is an example of this in action:
 
 ```php
-use MCP\Cache\CachingTrait;
+use QL\MCP\Cache\CachingTrait;
 
 class MyRepo
 {
@@ -121,18 +121,19 @@ class MyRepo
 }
 ```
 
-Setup example: Symfony DI:
+Setup example for **Symfony DI**:
 ```
-cache:
-    class: 'MCP\Cache\PredisCache'
-    arguments: [@predis]
-repo:
-    class: 'MyRepo'
-    calls:
-        - ['setCache', [@cache]]
-        - ['setCacheTTL', [3600]]
+services:
+    cache:
+        class: 'QL\MCP\Cache\PredisCache'
+        arguments: ['@predis']
+    repo:
+        class: 'MyRepo'
+        calls:
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', [3600]]
 ```
-Setup example: PHP:
+Setup example for **PHP**:
 ```php
 $cacher = new PredisCache($predis);
 
@@ -165,7 +166,7 @@ The `MemoryCache` is a very basic cache for caching data that only lives through
 of the request. This cache ignores `ttl`.
 
 ```php
-use MCP\Cache\MemoryCache;
+use QL\MCP\Cache\MemoryCache;
 
 $cache = new MemoryCache
 
@@ -184,8 +185,8 @@ An optional suffix may be provided to salt the cache keys. This can be used to i
 between code pushes or other configuration changes.
 
 ```php
-use MCP\Cache\SkeletorSessionCache;
-use MCP\DataType\Time\Clock;
+use QL\MCP\Cache\SkeletorSessionCache;
+use QL\MCP\Common\Time\Clock;
 
 $clock = new Clock('now', 'UTC');
 $suffix = '6038aa7'; // optional
@@ -210,7 +211,7 @@ It is not possible to store a `null` value with the predis cacher.
 
 ```php
 use Predis\Client;
-use MCP\Cache\PredisCache;
+use QL\MCP\Cache\PredisCache;
 
 $predis = new Client;
 $suffix = '6038aa7'; // optional
@@ -229,8 +230,8 @@ This cache will store items in the APC user cache space. Optionally, a maximum T
 `APCCache::setMaximumTtl($ttl)` method.
 
 ```php
-use MCP\Cache\APCCache;
-use MCP\DataType\Time\Clock;
+use QL\MCP\Cache\APCCache;
+use QL\MCP\Common\Time\Clock;
 
 $cache = new APCCache(new Clock());
 
@@ -282,7 +283,7 @@ Note: by default stampede protection is **disabled**.
 ### Code example
 
 ```php
-use MCP\Cache\APCCache;
+use QL\MCP\Cache\APCCache;
 
 $cache = new APCCache;
 $cache->enableStampedeProtection();

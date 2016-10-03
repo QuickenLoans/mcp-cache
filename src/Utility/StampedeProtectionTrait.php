@@ -1,14 +1,14 @@
 <?php
 /**
- * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
- *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
- *    is strictly prohibited.
+ * @copyright (c) 2016 Quicken Loans Inc.
+ *
+ * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache\Utility;
+namespace QL\MCP\Cache\Utility;
 
-use MCP\Cache\Item\Item;
-use MCP\Cache\Exception;
+use QL\MCP\Cache\Item\Item;
+use QL\MCP\Cache\Exception;
 use QL\MCP\Common\Time\TimePoint;
 
 /**

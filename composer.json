@@ -7,26 +7,20 @@
         { "name": "IT Team Web Core", "email": "itteamwebcore@quickenloans.com" }
     ],
     "archive": {
-        "exclude": [ "/phpunit.xml.dist", "/testing" ]
+        "exclude": [ "/phpunit.xml.dist", "/testing", "/src/Testing" ]
     },
     "autoload": {
-        "psr-4": { "MCP\\Cache\\": "src", "MCP\\Cache\\Testing\\": "testing/src" }
+        "psr-4": { "QL\\MCP\\Cache\\": "src" }
     },
-    "extra": {
-        "branch-alias": { "dev-master": "2.5.x-dev" }
-    },
-    "repositories": [
-        { "type": "composer", "url": "http://composer/" }
-    ],
 
     "require": {
-        "php": ">=5.4",
+        "php": "~5.6 || ~7.0",
         "ql/mcp-common": "~1.0"
     },
 
     "require-dev": {
         "mockery/mockery": "*",
-        "phpunit/phpunit": "4.*",
+        "phpunit/phpunit": "~5.0",
         "phpunit/php-invoker": "*",
         "predis/predis": "*",
         "psr/log": "*",

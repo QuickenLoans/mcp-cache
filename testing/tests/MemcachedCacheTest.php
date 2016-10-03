@@ -1,13 +1,13 @@
 <?php
 /**
- * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
- *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
- *    is strictly prohibited.
+ * @copyright (c) 2016 Quicken Loans Inc.
+ *
+ * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
-use MCP\Cache\Testing\MemoryLogger;
+use QL\MCP\Cache\Testing\MemoryLogger;
 use Memcached;
 use PHPUnit_Framework_TestCase;
 
@@ -21,7 +21,7 @@ class MemcachedCacheTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        if (!class_exists('Memcached')) {
+        if (!extension_loaded('memcached')) {
             $this->markTestSkipped('pecl-memcached is not installed.');
         }
     }
@@ -32,7 +32,7 @@ class MemcachedCacheTest extends PHPUnit_Framework_TestCase
 
         $cache = new MemcachedCache($memcached);
 
-        $this->assertInstanceOf(MemcachedCache::CLASS, $cache);
+        $this->assertInstanceOf(MemcachedCache::class, $cache);
     }
 
     public function testNoServersDontCare()
@@ -59,12 +59,12 @@ class MemcachedCacheTest extends PHPUnit_Framework_TestCase
         $actual = $cache->get('derp');
 
         $expectedError1 = ['error', 'Memcached Error : SET : RES_NO_SERVERS', [
-            'cacheKey' => 'mcp-cache:derp:suffix',
+            'cacheKey' => sprintf('mcp-cache-%s:derp:suffix', CacheInterface::VERSION),
             'memcacheError' => 'RES_NO_SERVERS'
         ]];
 
         $expectedError2 = ['error', 'Memcached Error : GET : RES_NO_SERVERS', [
-            'cacheKey' => 'mcp-cache:derp:suffix',
+            'cacheKey' => sprintf('mcp-cache-%s:derp:suffix', CacheInterface::VERSION),
             'memcacheError' => 'RES_NO_SERVERS'
         ]];
 
@@ -87,12 +87,12 @@ class MemcachedCacheTest extends PHPUnit_Framework_TestCase
         $actual = $cache->get('derp');
 
         $expectedError1 = ['warning', 'Memcached Error : SET : RES_SERVER_TEMPORARILY_DISABLED', [
-            'cacheKey' => 'mcp-cache:derp',
+            'cacheKey' => sprintf('mcp-cache-%s:derp', CacheInterface::VERSION),
             'memcacheError' => 'RES_SERVER_TEMPORARILY_DISABLED'
         ]];
 
         $expectedError2 = ['warning', 'Memcached Error : GET : RES_SERVER_TEMPORARILY_DISABLED', [
-            'cacheKey' => 'mcp-cache:derp',
+            'cacheKey' => sprintf('mcp-cache-%s:derp', CacheInterface::VERSION),
             'memcacheError' => 'RES_SERVER_TEMPORARILY_DISABLED'
         ]];
 

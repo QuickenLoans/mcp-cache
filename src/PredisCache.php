@@ -1,14 +1,14 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
- *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
- *    is strictly prohibited.
+ * @copyright (c) 2016 Quicken Loans Inc.
+ *
+ * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
-use MCP\Cache\Utility\KeySaltingTrait;
-use MCP\Cache\Utility\MaximumTTLTrait;
+use QL\MCP\Cache\Utility\KeySaltingTrait;
+use QL\MCP\Cache\Utility\MaximumTTLTrait;
 use Predis\Client;
 
 /**
@@ -24,7 +24,7 @@ class PredisCache implements CacheInterface
      *
      * @var string
      */
-    const PREFIX = 'mcp-cache';
+    const PREFIX = 'mcp-cache-' . CacheInterface::VERSION;
     const DELIMITER = ':';
 
     /**

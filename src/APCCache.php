@@ -1,16 +1,16 @@
 <?php
 /**
- * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
- *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
- *    is strictly prohibited.
+ * @copyright (c) 2016 Quicken Loans Inc.
+ *
+ * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
-use MCP\Cache\Item\Item;
-use MCP\Cache\Utility\KeySaltingTrait;
-use MCP\Cache\Utility\MaximumTTLTrait;
-use MCP\Cache\Utility\StampedeProtectionTrait;
+use QL\MCP\Cache\Item\Item;
+use QL\MCP\Cache\Utility\KeySaltingTrait;
+use QL\MCP\Cache\Utility\MaximumTTLTrait;
+use QL\MCP\Cache\Utility\StampedeProtectionTrait;
 use QL\MCP\Common\Time\Clock;
 
 /**
@@ -33,7 +33,7 @@ class APCCache implements CacheInterface
      *
      * @var string
      */
-    const PREFIX = 'mcp-cache';
+    const PREFIX = 'mcp-cache-' . CacheInterface::VERSION;
     const DELIMITER = '-';
 
     /**
@@ -54,7 +54,7 @@ class APCCache implements CacheInterface
      */
     public function __construct(Clock $clock = null, $suffix = null)
     {
-        if (!function_exists('\apcu_cache_info')) {
+        if (!extension_loaded('apcu')) {
             throw new Exception(self::ERR_APC_NOT_INSTALLED);
         }
 
@@ -109,10 +109,12 @@ class APCCache implements CacheInterface
     /**
      * Clear the cache
      *
+     * WARNING: Nonstandard method.
+     *
      * @return bool
      */
     public function clear()
     {
-        return apcu_clear_cache('user');
+        return apcu_clear_cache();
     }
 }

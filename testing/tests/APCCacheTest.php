@@ -1,84 +1,96 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
- *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
- *    is strictly prohibited.
+ * @copyright (c) 2016 Quicken Loans Inc.
+ *
+ * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
+use QL\MCP\Cache\Exception as CacheException;
 use QL\MCP\Common\Time\Clock;
 use PHPUnit_Framework_TestCase;
 
 class APCCacheTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @var APCCache
-     */
-    private $cache;
+    const STAMPEDE_RUNS = 1000;
+
+    public $clock;
+
+    public function buildFixedClock($time)
+    {
+        return new Clock($time, 'UTC');
+    }
 
     public function setUp()
     {
-        if (!function_exists('\apcu_fetch')) {
-            $this->markTestSkipped('APC not installed');
+        if (!extension_loaded('apcu')) {
+            $this->markTestSkipped('ext-apcu is not installed');
             return;
         }
 
-        apcu_clear_cache('user');
+        if (!ini_get('apc.enabled') || !ini_get('apc.enable_cli')) {
+            $this->markTestSkipped('ext-apcu is not enabled');
+            return;
+        }
 
-        $this->cache = new APCCache(new Clock);
+        apcu_clear_cache();
+
+        $this->clock = new Clock('now', 'UTC');
     }
 
     public function tearDown()
     {
-        apcu_clear_cache('user');
-    }
+        if (!extension_loaded('apcu')) {
+            return;
+        }
 
-    public function testClear()
-    {
-        $this->cache->set('a', 'b');
-
-        $out = $this->cache->clear();
-        $this->assertEquals(true, $out);
-
-        $this->assertEquals(null, $this->cache->get('a'));
+        apcu_clear_cache();
     }
 
     public function testSet()
     {
-        $out = $this->cache->set('a', 'b');
+        $cache = new APCCache($this->clock);
+
+        $out = $cache->set('a', 'b');
         $this->assertEquals(true, $out);
 
-        $this->assertEquals('b', $this->cache->get('a'));
+        $this->assertEquals('b', $cache->get('a'));
     }
 
     public function testSetOverwrite()
     {
-        $out = $this->cache->set('a', 'b');
+        $cache = new APCCache($this->clock);
+
+        $out = $cache->set('a', 'b');
         $this->assertEquals(true, $out);
 
-        $out = $this->cache->set('a', 'c');
+        $out = $cache->set('a', 'c');
         $this->assertEquals(true, $out);
 
-        $this->assertEquals('c', $this->cache->get('a'));
+        $this->assertEquals('c', $cache->get('a'));
     }
 
     public function testGetNotExist()
     {
-        $this->assertEquals(null, $this->cache->get('a'));
+        $cache = new APCCache($this->clock);
+
+        $this->assertEquals(null, $cache->get('a'));
     }
 
     public function testGetImmediateExpire()
     {
+        $cache = new APCCache($this->clock);
+
         // Set data with long expiry
-        $out = $this->cache->set('a', 'b', 5);
-        $this->assertSame('b', $this->cache->get('a'));
+        $out = $cache->set('a', 'b', 5);
+        $this->assertSame('b', $cache->get('a'));
 
         // Set to null overrides
-        $out = $this->cache->set('a', null);
+        $out = $cache->set('a', null);
         $this->assertEquals(true, $out);
 
-        $this->assertEquals(null, $this->cache->get('a'));
+        $this->assertEquals(null, $cache->get('a'));
     }
 
     /**
@@ -86,13 +98,15 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
      */
     public function testGetExpired()
     {
-        $out = $this->cache->set('a', 'b', 1);
+        $cache = new APCCache($this->clock);
+
+        $out = $cache->set('a', 'b', 1);
         $this->assertEquals(true, $out);
 
         // sleep until expired
         sleep(2);
 
-        $this->assertEquals(null, $this->cache->get('a'));
+        $this->assertEquals(null, $cache->get('a'));
     }
 
     /**
@@ -100,50 +114,67 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
      */
     public function testUseMaxTtl()
     {
-        $this->cache->setMaximumTtl(1);
-        $out = $this->cache->set('a', 'b', 10);
+        $cache = new APCCache($this->clock);
+
+        $cache->setMaximumTtl(1);
+        $out = $cache->set('a', 'b', 10);
         $this->assertEquals(true, $out);
 
         // sleep until expired
         sleep(2);
 
-        $this->assertEquals(null, $this->cache->get('a'));
+        $this->assertEquals(null, $cache->get('a'));
+    }
+
+    public function testClear()
+    {
+        $cache = new APCCache($this->clock);
+        $cache->set('a', 'b');
+
+        $out = $cache->clear();
+        $this->assertEquals(true, $out);
+
+        $this->assertEquals(null, $cache->get('a'));
     }
 
     public function testWithStampedeProtection()
     {
-        $cache = new APCCache(new Clock('2015-08-15 12:00:00', 'UTC'));
+        $clock = $this->buildFixedClock('2015-08-15 12:00:00');
+        $cache = new APCCache($clock);
         $cache->set('a', 'b', 60);
 
         // Reset cache so we can specify a clock time some point in the future
         // 50s (75%) until ttl expires
-        $cache = new APCCache(new Clock('2015-08-15 12:00:50', 'UTC'));
+        $clock = $this->buildFixedClock('2015-08-15 12:00:50');
+        $cache = new APCCache($clock);
         $cache->enableStampedeProtection();
         $cache->setPrecomputeBeta(3);
         $cache->setPrecomputeDelta(10);
 
         $expired = $i = 0;
-        while ($i++ < 100) {
+        while ($i++ < self::STAMPEDE_RUNS) {
             if ($cache->get('a') === null) $expired++;
         }
 
         // using default settings, approx 5% should expire.
-        $this->assertGreaterThanOrEqual(2, $expired);
-        $this->assertLessThanOrEqual(8, $expired);
+        $this->assertGreaterThanOrEqual(self::STAMPEDE_RUNS * .02, $expired);
+        $this->assertLessThanOrEqual(self::STAMPEDE_RUNS * .08, $expired);
     }
 
     public function testNoExpiryIgnoresStampedeProtection()
     {
-        $cache = new APCCache(new Clock('2015-08-15 12:00:00', 'UTC'));
+        $clock = $this->buildFixedClock('2015-08-15 12:00:00');
+        $cache = new APCCache($clock);
         $cache->set('a', 'b');
 
         // Reset cache so we can specify a clock time some point in the future
         // 45s (75%) until ttl expires
-        $cache = new APCCache(new Clock('2015-08-15 12:00:59', 'UTC'));
+        $clock = $this->buildFixedClock('2015-08-15 12:00:59');
+        $cache = new APCCache($clock);
         $cache->enableStampedeProtection();
 
         $expired = $i = 0;
-        while ($i++ < 100) {
+        while ($i++ < self::STAMPEDE_RUNS) {
             if ($cache->get('a') === null) $expired++;
         }
 
@@ -151,22 +182,20 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
         $this->assertSame(0, $expired);
     }
 
-    /**
-     * @expectedException MCP\Cache\Exception
-     * @expectedExceptionMessage Invalid beta specified. An integer between 1 and 10 is required.
-     */
     public function testBadBetaThrowsException()
     {
+        $this->expectException(CacheException::class);
+        $this->expectExceptionMessage('Invalid beta specified. An integer between 1 and 10 is required.');
+
         $cache = new APCCache;
         $cache->setPrecomputeBeta(3.0);
     }
 
-    /**
-     * @expectedException MCP\Cache\Exception
-     * @expectedExceptionMessage Invalid delta specified. An integer between 1 and 100 is required.
-     */
     public function testBadDeltaThrowsException()
     {
+        $this->expectException(CacheException::class);
+        $this->expectExceptionMessage('Invalid delta specified. An integer between 1 and 100 is required.');
+
         $cache = new APCCache;
         $cache->setPrecomputeDelta('derp');
     }

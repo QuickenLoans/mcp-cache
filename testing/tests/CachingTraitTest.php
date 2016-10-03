@@ -1,14 +1,14 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
- *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
- *    is strictly prohibited.
+ * @copyright (c) 2016 Quicken Loans Inc.
+ *
+ * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
 use PHPUnit_Framework_TestCase;
-use MCP\Cache\Testing\Caching;
+use QL\MCP\Cache\Testing\CachingStub;
 use Mockery;
 
 class CachingTraitTest extends PHPUnit_Framework_TestCase
@@ -17,12 +17,12 @@ class CachingTraitTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->cache = Mockery::mock('MCP\Cache\CacheInterface');
+        $this->cache = Mockery::mock(CacheInterface::class);
     }
 
     public function testCacheAccessor()
     {
-        $caching = new Caching;
+        $caching = new CachingStub;
 
         $this->assertNull(null, $caching->cache());
 
@@ -32,14 +32,14 @@ class CachingTraitTest extends PHPUnit_Framework_TestCase
 
     public function testSettingToCacheWithoutCacheSetDoesNotBlowUp()
     {
-        $caching = new Caching;
+        $caching = new CachingStub;
         $actual = $caching->setToCache('key', 'data');
         $this->assertNull($actual);
     }
 
     public function testGettingFromCacheWithoutCacheSetDoesNotBlowUp()
     {
-        $caching = new Caching;
+        $caching = new CachingStub;
         $actual = $caching->getFromCache('key');
         $this->assertNull($actual);
     }
@@ -51,7 +51,7 @@ class CachingTraitTest extends PHPUnit_Framework_TestCase
             ->with('key', 'data')
             ->once();
 
-        $caching = new Caching;
+        $caching = new CachingStub;
         $caching->setCache($this->cache);
 
         $caching->setToCache('key', 'data');
@@ -65,7 +65,7 @@ class CachingTraitTest extends PHPUnit_Framework_TestCase
             ->once()
             ->andReturn('data2');
 
-        $caching = new Caching;
+        $caching = new CachingStub;
         $caching->setCache($this->cache);
 
         $actual = $caching->getFromCache('key');
@@ -79,7 +79,7 @@ class CachingTraitTest extends PHPUnit_Framework_TestCase
             ->with('key', 'data', 100)
             ->once();
 
-        $caching = new Caching;
+        $caching = new CachingStub;
         $caching->setCache($this->cache);
         $caching->setCacheTTL('100');
 
@@ -93,7 +93,7 @@ class CachingTraitTest extends PHPUnit_Framework_TestCase
             ->with('key', 'data', 200)
             ->once();
 
-        $caching = new Caching;
+        $caching = new CachingStub;
         $caching->setCache($this->cache);
         $caching->setCacheTTL('100');
 

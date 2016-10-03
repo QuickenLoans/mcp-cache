@@ -1,14 +1,14 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
- *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
- *    is strictly prohibited.
+ * @copyright (c) 2016 Quicken Loans Inc.
+ *
+ * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace MCP\Cache;
+namespace QL\MCP\Cache;
 
-use MCP\Cache\Item\Item;
-use MCP\Cache\Utility\KeySaltingTrait;
+use QL\MCP\Cache\Item\Item;
+use QL\MCP\Cache\Utility\KeySaltingTrait;
 use QL\MCP\Common\Time\Clock;
 use Sk\Session;
 
@@ -24,7 +24,7 @@ class SkeletorSessionCache implements CacheInterface
      *
      * @var string
      */
-    const PREFIX = 'mcp-cache';
+    const PREFIX = 'mcp-cache-' . CacheInterface::VERSION;
     const DELIMITER = '-';
 
     /**
