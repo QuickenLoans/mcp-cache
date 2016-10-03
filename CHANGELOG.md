@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file. See [keepac
 
 This package follows [semver](http://semver.org/) versioning.
 
-## [3.0.0] - 2016-09-XX
+## [3.0.0] - 2016-10-03
 
 ### Added
 - Added `CacheInterface::VERSION` to get the current version of the Cache package.
