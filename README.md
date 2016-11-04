@@ -1,29 +1,34 @@
 # MCP Cache
 
-Caching standard for MCP services.
+[![Build Status](https://travis-ci.org/quickenloans-mcp/mcp-common.png)](https://travis-ci.org/quickenloans-mcp/mcp-cache)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/quickenloans-mcp/mcp-cache/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/quickenloans-mcp/mcp-cache/?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/ql/mcp-cache/version)](https://packagist.org/packages/ql/mcp-cache)
+[![License](https://poser.pugx.org/ql/mcp-cache/license)](https://packagist.org/packages/ql/mcp-cache)
 
-## Contents
+Simple caching standard for Quicken Loans PHP projects.
 
-- [Installation](#installation)
+We prefer a simpler cache protocol than the one provided by [PSR-6 Caching Interface](http://www.php-fig.org/psr/psr-6/).
+This package has many similarities with the draft [PSR-16 Simple Cache](https://github.com/php-fig/fig-standards/blob/master/proposed/simplecache.md).
+If this PSR is accepted, we will update this package to ensure compatibility.
+
+## Installation
+
+```
+composer require ql/mcp-cache ~3.0
+```
+
+## Table of Contents
+
 - [Usage](#usage)
     - [CachingTrait](#cachingtrait)
 - [Implementations](#implementations)
     - [MemoryCache](#memorycache)
-    - [SkeletorSessionCache](#skeletorsessioncache)
     - [PredisCache](#prediscache)
     - [APCCache](#apccache)
     - [MemcachedCache](#memcachedcache)
     - [MemcacheCache](#memcachecache)
 - [Stampede Protection](#stampede-protection)
 
-## Installation
-
-Run the following commands.
-
-```bash
-composer config repositories.internal-composer composer http://composer
-composer require ql/mcp-cache ~3.0
-```
 
 ## Usage
 
@@ -154,7 +159,6 @@ Please note that it is possible to set a *global* ttl for your class. If a ttl i
 ## Implementations
 
 - [MemoryCache](#memorycache)
-- [SkeletorSessionCache](#skeletorsessioncache)
 - [PredisCache](#prediscache)
 - [APCCache](#apccache)
 - [MemcachedCache](#memcachedcache)
@@ -174,28 +178,6 @@ $cache = new MemoryCache
 $cache->set('key', $data);
 
 // Store data with expiration of 10 minutes  - note that ttl is ignored for this cacher
-$cache->set('key', $data, 600);
-```
-
-### SkeletorSessionCache
-
-This cache will store data in the skeletor session.
-
-An optional suffix may be provided to salt the cache keys. This can be used to invalidate the entire cache
-between code pushes or other configuration changes.
-
-```php
-use QL\MCP\Cache\SkeletorSessionCache;
-use QL\MCP\Common\Time\Clock;
-
-$clock = new Clock('now', 'UTC');
-$suffix = '6038aa7'; // optional
-$cache = new SkeletorSessionCache($session, $clock, $suffix);
-
-// Store data
-$cache->set('key', $data);
-
-// Store data with expiration of 10 minutes
 $cache->set('key', $data, 600);
 ```
 
@@ -264,7 +246,7 @@ See [PHP.NET Memcache Book](http://php.net/manual/en/book.memcache.php)
 
 ## Stampede Protection
 
-In the case of high load services, when the cache expires or is flushed may requests attempting to regenerate the
+In the case of high load services, when the cache expires or is flushed many requests attempting to regenerate the
 cache can cause a dog-piling effect on dependent ssystems, especially if the cost of regenerating the cached data is high.
 This is typically a concern under heavy load, when cached data is shared across many requests.
 

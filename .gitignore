@@ -1,6 +1,6 @@
-# miscellaneous
+# testing
+/.phpunit/
 /phpunit.xml
-/phpunit/
 
 # package installation
 /composer.lock

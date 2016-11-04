@@ -1,10 +1,13 @@
 {
     "name": "ql/mcp-cache",
-    "description": "Caching standard for mcp services",
-    "homepage": "http://git/mcp/mcp-cache",
-    "license": "proprietary",
+    "description": "Simple caching standard for Quicken Loans PHP projects",
+
+    "type": "library",
+    "keywords": [ "mcp", "quickenloans" ],
+    "license": "MIT",
+
     "authors": [
-        { "name": "IT Team Web Core", "email": "itteamwebcore@quickenloans.com" }
+        { "name": "Steve Kluck", "email": "steve@kluck.engineering" }
     ],
     "archive": {
         "exclude": [ "/phpunit.xml.dist", "/testing", "/src/Testing" ]
