@@ -19,7 +19,7 @@
     beStrictAboutTestsThatDoNotTestAnything="false"
     beStrictAboutOutputDuringTests="true"
     beStrictAboutTestSize="true"
-    checkForUnintentionallyCoveredCode="false"
+    beStrictAboutCoversAnnotation="true"
 
     timeoutForSmallTests="2"
     verbose="true">
