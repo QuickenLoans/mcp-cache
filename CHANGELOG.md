@@ -18,6 +18,10 @@ This package follows [semver](http://semver.org/) versioning.
 - Switched dependency from `ql/mcp-core` to `ql/mcp-common`.
 - Fixed `APCCache::clear()`.
 
+### Removed
+
+- Removed `SkeletorSessionCache`.
+
 ## [2.5.1] - 2015-10-13
 
 ### Changed
