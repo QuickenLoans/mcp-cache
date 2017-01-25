@@ -10,6 +10,7 @@ namespace QL\MCP\Cache;
 use QL\MCP\Cache\Exception as CacheException;
 use QL\MCP\Common\Time\Clock;
 use PHPUnit_Framework_TestCase;
+use QL\MCP\Common\Time\TimeInterval;
 
 class APCCacheTest extends PHPUnit_Framework_TestCase
 {
@@ -100,7 +101,7 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
     {
         $cache = new APCCache($this->clock);
 
-        $out = $cache->set('a', 'b', 1);
+        $out = $cache->set('a', 'b', new TimeInterval('PT1S'));
         $this->assertEquals(true, $out);
 
         // sleep until expired
@@ -117,7 +118,7 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
         $cache = new APCCache($this->clock);
 
         $cache->setMaximumTtl(1);
-        $out = $cache->set('a', 'b', 10);
+        $out = $cache->set('a', 'b', new \DateInterval('PT1S'));
         $this->assertEquals(true, $out);
 
         // sleep until expired

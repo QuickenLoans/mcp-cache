@@ -22,8 +22,21 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
         $this->predis = Mockery::mock(Client::class);
         $this->predis
             ->shouldReceive('get')
-            ->with('mcp-cache-generation-' . CacheInterface::VERSION)
+            ->with('mcp-cache-' . CacheInterface::VERSION . '-generation')
             ->andReturn(1);
+    }
+
+    /**
+     * @dataProvider invalidKeyDataProvider
+     */
+    public function testInvalidArgumentExceptionThrownOnRequiredMethods($method, $args)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $mock = Mockery::mock(Client::class)->shouldIgnoreMissing();
+
+        $cache = new PredisCache($mock);
+
+        $cache->$method(...$args);
     }
 
     public function testSettingAKeyAndGetSameKeyResultsInOriginalValue()
@@ -152,4 +165,134 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
         // assert set value is properly serialized
         $this->assertSame(serialize('data'), $setValue);
     }
+
+    public function testDeleteCallsWithSaltedKey()
+    {
+        $expectedKey = sprintf('mcp-cache-%s:test:1', CacheInterface::VERSION);
+
+        $this->predis
+            ->shouldReceive('del')
+            ->with($expectedKey);
+
+
+        $cache = new PredisCache($this->predis);
+
+        $cache->delete('test');
+    }
+
+    public function testClearSetsCacheGenerationToCache()
+    {
+        $this->predis->shouldReceive('set')->with(PredisCache::GENERATION_KEY, 2);
+
+        $cache = new PredisCache($this->predis);
+        $cache->clear();
+    }
+
+    public function testGetMultipleReturnsCorrectKeys()
+    {
+        $keys = ['foo', 'bar'];
+
+        $expectedKeys = [
+            sprintf('mcp-cache-%s:foo:1', CacheInterface::VERSION),
+            sprintf('mcp-cache-%s:bar:1', CacheInterface::VERSION)
+        ];
+
+        $this->predis->shouldReceive('mget')->with($expectedKeys)->andReturn([serialize('fooReturn'), null]);
+
+        $cache = new PredisCache($this->predis);
+        $response = $cache->getMultiple($keys);
+
+        $this->assertEquals(['foo' => 'fooReturn', 'bar' => null], $response);
+    }
+
+    public function testGetMultipleReturnsCorrectKeysWithProvidedDefaults()
+    {
+        $keys = ['foo'];
+
+        $expectedKeys = [
+            sprintf('mcp-cache-%s:foo:1', CacheInterface::VERSION),
+        ];
+
+        $this->predis->shouldReceive('mget')->with($expectedKeys)->andReturn([null]);
+
+        $cache = new PredisCache($this->predis);
+        $response = $cache->getMultiple($keys, 'defaultValue');
+
+        $this->assertEquals(['foo' => 'defaultValue'], $response);
+    }
+
+    public function testSetMultipleCallsWithSetValues()
+    {
+        $inputValue = ['foo' => 1];
+        $expected = $inputValue;
+
+        $this->predis->shouldReceive('multi');
+        $this->predis->shouldReceive('exec');
+
+        $expectedKey = sprintf('mcp-cache-%s:foo:1', CacheInterface::VERSION);
+        $setValue = null;
+        $this->predis
+            ->shouldReceive('setex')
+            ->with($expectedKey, 60, Mockery::on(function($v) use (&$setValue) {
+                $setValue = $v;
+                return true;
+            }));
+
+        $cache = new PredisCache($this->predis);
+        $cache->setMaximumTtl(90);
+        $cache->setMultiple($inputValue, 60);
+
+        // assert set value is properly serialized
+        $this->assertSame(serialize(1), $setValue);
+    }
+
+    public function testDeleteMultipleCallsDeleteWithAllExpectedValues()
+    {
+        $inputValue = ['foo' , 'bar'];
+        $expectedKeys = [
+            $expectedKey = sprintf('mcp-cache-%s:foo:1', CacheInterface::VERSION),
+            $expectedKey = sprintf('mcp-cache-%s:bar:1', CacheInterface::VERSION)
+        ];
+
+        $this->predis->shouldReceive('multi');
+        $this->predis->shouldReceive('exec');
+
+        foreach ($expectedKeys as $expectedKey) {
+            $this->predis
+            ->shouldReceive('del')
+            ->with($expectedKey);
+        }
+
+        $cache = new PredisCache($this->predis);
+        $this->assertTrue($cache->deleteMultiple($inputValue));
+    }
+
+    public function testHasReturnsPredisExistsCallAsBoolean()
+    {
+        $this->predis->shouldReceive('exists')->andReturn(1);
+
+        $cache = new PredisCache($this->predis);
+        $exists = $cache->has('foo');
+
+        $this->assertTrue(is_bool($exists));
+        $this->assertTrue($exists);
+    }
+
+    public function invalidKeyDataProvider()
+    {
+        $invalidKey = '{}()/\\:';
+
+        // returns [$method, []ofMethodArguments]
+        return [
+            ['get', [$invalidKey]],
+            ['set', [$invalidKey, 'foo']],
+            ['delete', [$invalidKey]],
+            ['getMultiple', [[$invalidKey]]],
+            ['setMultiple', [[$invalidKey => 'foo']]],
+            ['deleteMultiple', [[$invalidKey]]],
+            ['has', [$invalidKey]],
+        ];
+    }
 }
+
+

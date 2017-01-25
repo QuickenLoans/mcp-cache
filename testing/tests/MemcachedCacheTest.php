@@ -100,4 +100,34 @@ class MemcachedCacheTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expectedError1, $logger->messages[0]);
         $this->assertSame($expectedError2, $logger->messages[1]);
     }
+
+    /**
+     * @dataProvider invalidKeyDataProvider
+     */
+    public function testInvalidArgumentExceptionThrownOnRequiredMethods($method, $args)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $logger = new MemoryLogger;
+
+        $memcached = new Memcached;
+        $cache = new MemcachedCache($memcached, 'suffix', $logger);
+
+        $cache->$method(...$args);
+    }
+
+    public function invalidKeyDataProvider()
+    {
+        $invalidKey = '{}()/\\:';
+
+        // returns [$method, []ofMethodArguments]
+        return [
+            ['get', [$invalidKey]],
+            ['set', [$invalidKey, 'foo']],
+            ['delete', [$invalidKey]],
+            ['getMultiple', [[$invalidKey]]],
+            ['setMultiple', [[$invalidKey => 'foo']]],
+            ['deleteMultiple', [[$invalidKey]]],
+            ['has', [$invalidKey]],
+        ];
+    }
 }

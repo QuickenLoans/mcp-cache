@@ -9,6 +9,9 @@ namespace QL\MCP\Cache\Utility;
 
 use QL\MCP\Cache\InvalidArgumentException;
 
+/**
+ * @internal
+ */
 trait CacheInputValidationTrait
 {
     // 4 backslashes to match one literal back slash seems bananas.

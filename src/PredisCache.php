@@ -30,7 +30,7 @@ class PredisCache implements PSR16CacheInterface, MCPCacheInterface
      */
     const PREFIX = 'mcp-cache-' . CacheInterface::VERSION;
     const DELIMITER = ':';
-    const GENERATION_KEY = 'mcp-cache-generation-' . CacheInterface::VERSION;
+    const GENERATION_KEY = self::PREFIX . '-generation';
 
     /**
      * @var client
@@ -220,17 +220,13 @@ class PredisCache implements PSR16CacheInterface, MCPCacheInterface
     public function setMultiple($values, $ttl = null)
     {
         $values = $this->validateIterable($values);
-        $saltedKeys = $this->validateAndSaltKeys(array_keys($values));
-
-        $serializedValues = array_map("serialize", array_values($values));
-        $saltedKeysWithValues = array_combine($saltedKeys, $serializedValues);
 
         $ttl = $this->determineTTL($ttl);
 
         //start redis multi call
         $this->predis->multi();
 
-        foreach ($saltedKeysWithValues as $key => $value) {
+        foreach ($values as $key => $value) {
             $this->set($key, $value, $ttl);
         }
 
@@ -323,7 +319,9 @@ class PredisCache implements PSR16CacheInterface, MCPCacheInterface
      */
     private function validateAndSaltKeys(array $keys)
     {
-        array_map(['this', 'validateKey'], $keys);
+        array_map(function($key) {
+            $this->validateKey($key);
+        }, $keys);
 
         return array_map(function ($key) {
             return $this->salted($key, $this->suffix, $this->cacheGeneration);
