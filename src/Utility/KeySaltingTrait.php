@@ -24,7 +24,7 @@ trait KeySaltingTrait
      *
      * @return string
      */
-    private function salted($key, $suffix = null, $generation = null)
+    private function salted($key, $suffix = null)
     {
         $delimiter = ':';
         if (defined('static::DELIMITER')) {
@@ -33,10 +33,6 @@ trait KeySaltingTrait
 
         if (defined('static::PREFIX')) {
             $key = sprintf('%s%s%s', static::PREFIX, $delimiter, $key);
-        }
-
-        if ($generation) {
-            $key = sprintf('%s%s%s', $key, $delimiter, (string)$generation);
         }
 
         if ($suffix) {

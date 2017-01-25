@@ -18,8 +18,6 @@ This package follows [semver](http://semver.org/) versioning.
     - When the cache package is updated any cache keys using the before mentioned values will throw `Psr\SimpleCache\InvalidArgumentExceptions`. 
     - Cache Key delimiters now default to `.` since `:` is now an invalid key character
         - When the cache package is updated all old keys using the default delimiter will be invalid.
-### Changed
-- Predis Clients now append a "CacheGeneration" number to the salted keys to provide simple cache invalidation with `PredisHandler::clear`
 
 ## [3.0.0] - 2016-11-21
 

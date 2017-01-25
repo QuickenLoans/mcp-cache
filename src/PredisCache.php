@@ -30,7 +30,6 @@ class PredisCache implements PSR16CacheInterface, MCPCacheInterface
      */
     const PREFIX = 'mcp-cache-' . CacheInterface::VERSION;
     const DELIMITER = ':';
-    const GENERATION_KEY = self::PREFIX . '-generation';
 
     /**
      * @var client
@@ -60,7 +59,6 @@ class PredisCache implements PSR16CacheInterface, MCPCacheInterface
     {
         $this->predis = $client;
         $this->suffix = $suffix;
-        $this->setStoredCacheGeneration();
     }
 
     /**
@@ -77,7 +75,7 @@ class PredisCache implements PSR16CacheInterface, MCPCacheInterface
     public function get($key, $default = null)
     {
         $this->validateKey($key);
-        $key = $this->salted($key, $this->suffix, $this->cacheGeneration);
+        $key = $this->salted($key, $this->suffix);
 
         $raw = $this->predis->get($key);
 
@@ -105,7 +103,7 @@ class PredisCache implements PSR16CacheInterface, MCPCacheInterface
     public function set($key, $value, $ttl = null)
     {
         $this->validateKey($key);
-        $key = $this->salted($key, $this->suffix, $this->cacheGeneration);
+        $key = $this->salted($key, $this->suffix);
 
         /*
          * handle deletions
@@ -149,7 +147,7 @@ class PredisCache implements PSR16CacheInterface, MCPCacheInterface
     public function delete($key)
     {
         $this->validateKey($key);
-        $key = $this->salted($key, $this->suffix, $this->cacheGeneration);
+        $key = $this->salted($key, $this->suffix);
 
         $this->predis->del($key);
 
@@ -157,13 +155,14 @@ class PredisCache implements PSR16CacheInterface, MCPCacheInterface
     }
 
     /**
-     * Wipes clean the entire cache's keys.
+     * Wipes clean the entire cache's.
      *
      * @return bool True on success and false on failure.
      */
     public function clear()
     {
-        $this->setCacheGeneration($this->cacheGeneration + 1);
+        //CAREFUL on shared cache's this will clear all keys regardless if they were set by mcp-cache or not
+        $this->predis->flushdb();
 
         return true;
     }
@@ -285,46 +284,15 @@ class PredisCache implements PSR16CacheInterface, MCPCacheInterface
     }
 
     /**
-     * Querys the cache for the current cache generation if no cache generation is found than
-     * generation 1 is set.
-     */
-    private function setStoredCacheGeneration()
-    {
-        $storedGeneration = $this->predis->get(self::GENERATION_KEY);
-
-        if (!$storedGeneration) {
-            $storedGeneration = 1;
-            $this->setCacheGeneration(1);
-        }
-
-        $this->cacheGeneration = $storedGeneration;
-    }
-
-    /**
-     * Stores the updated cache generation in the cache. This will invalidate all keys
-     * passing the generation in their salts
-     *
-     * @param $cacheGeneration
-     */
-    private function setCacheGeneration($cacheGeneration)
-    {
-        $this->predis->set(self::GENERATION_KEY, $cacheGeneration);
-        $this->cacheGeneration = $cacheGeneration;
-    }
-
-    /**
      * @param array $keys
      *
      * @return array
      */
     private function validateAndSaltKeys(array $keys)
     {
-        array_map(function($key) {
+        return array_map(function($key) {
             $this->validateKey($key);
-        }, $keys);
-
-        return array_map(function ($key) {
-            return $this->salted($key, $this->suffix, $this->cacheGeneration);
+            return $this->salted($key, $this->suffix);
         }, $keys);
     }
 }
