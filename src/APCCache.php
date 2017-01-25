@@ -136,6 +136,7 @@ class APCCache implements CacheInterface, PSR16CacheInterface
     public function delete($key)
     {
         $this->validateKey($key);
+        $key = $this->salted($key, $this->suffix);
 
         apcu_delete($key);
 
@@ -159,13 +160,13 @@ class APCCache implements CacheInterface, PSR16CacheInterface
         $keys = $this->validateIterable($keys);
         $saltedKeys = array_map(function($key){
             $this->validateKey($key);
-            $this->salted($key, $this->suffix);
+            return $this->salted($key, $this->suffix);
         }, $keys);
 
         $responses = [];
         for ($i = 0; $i < count($keys); $i++) {
             $responseKey = $keys[$i];
-            $responseValue = $this->get($saltedKeys[$i]);
+            $responseValue = $this->get($saltedKeys[$i], $default);
 
             $responses[$responseKey] = $responseValue;
         }
@@ -192,7 +193,7 @@ class APCCache implements CacheInterface, PSR16CacheInterface
         $values = $this->validateIterable($values);
         $saltedKeys = array_map(function ($key) {
             $this->validateKey($key);
-            $this->salted($key, $this->suffix);
+            return $this->salted($key, $this->suffix);
         }, array_keys($values));
 
         $saltedKeysAndValues = array_combine($saltedKeys, array_values($values));
@@ -221,7 +222,7 @@ class APCCache implements CacheInterface, PSR16CacheInterface
         $keys = $this->validateIterable($keys);
         $saltedKeys = array_map(function($key){
             $this->validateKey($key);
-            $this->salted($key, $this->suffix);
+            return $this->salted($key, $this->suffix);
         }, $keys);
 
         foreach ($saltedKeys as $key) {
@@ -249,6 +250,7 @@ class APCCache implements CacheInterface, PSR16CacheInterface
     public function has($key)
     {
         $this->validateKey($key);
+        $key = $this->salted($key, $this->suffix);
 
         return apcu_exists($key);
     }

@@ -190,4 +190,25 @@ class MemoryCacheTest extends PHPUnit_Framework_TestCase
             ['has', [$invalidKey]],
         ];
     }
+
+    /**
+     * @dataProvider invalidIterableProvider
+     */
+    public function testInvalidIterableThrowsException($method, $args)
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $cache = new MemoryCache();
+        $cache->$method(...$args);
+    }
+
+    public function invalidIterableProvider()
+    {
+        // returns [$method, []ofMethodArguments]
+        return [
+            ['getMultiple', ['notAnIterator']],
+            ['setMultiple', ['notAnIterator']],
+            ['deleteMultiple', ['notAnIterator']],
+        ];
+    }
 }

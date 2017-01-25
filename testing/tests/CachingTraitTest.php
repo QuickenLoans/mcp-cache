@@ -57,6 +57,40 @@ class CachingTraitTest extends PHPUnit_Framework_TestCase
         $caching->setToCache('key', 'data');
     }
 
+    public function testSettingCacheToNonMCPLegacyOrPSR16Errors()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $cache = 'wrong!';
+
+        $caching = new CachingStub();
+        $caching->setCache($cache);
+    }
+
+    public function testCallingClearCacheWithCacheSetCallsCache()
+    {
+        $cache = Mockery::mock('Psr\SimpleCache\CacheInterface');
+        $cache
+            ->shouldReceive('clear')
+            ->with()
+            ->once();
+
+        $caching = new CachingStub;
+        $caching->setCache($cache);
+
+        $caching->clearCache();
+    }
+
+    public function testCallingClearCacheWithoutPSR16CacheDoesNotblowUp()
+    {
+        $cache = Mockery::mock(CacheInterface::class);
+        $caching = new CachingStub;
+        $caching->setCache($cache);
+
+        $caching->clearCache();
+    }
+
+
     public function testGettingFromCacheWithCacheSetCallsCache()
     {
         $this->cache

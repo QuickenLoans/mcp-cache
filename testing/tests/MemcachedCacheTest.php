@@ -130,4 +130,29 @@ class MemcachedCacheTest extends PHPUnit_Framework_TestCase
             ['has', [$invalidKey]],
         ];
     }
+
+    /**
+     * @dataProvider invalidIterableProvider
+     */
+    public function testInvalidIterableThrowsException($method, $args)
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $logger = new MemoryLogger;
+
+        $memcached = new Memcached;
+        $cache = new MemcachedCache($memcached, 'suffix', $logger);
+
+        $cache->$method(...$args);
+    }
+
+    public function invalidIterableProvider()
+    {
+        // returns [$method, []ofMethodArguments]
+        return [
+            ['getMultiple', ['notAnIterator']],
+            ['setMultiple', ['notAnIterator']],
+            ['deleteMultiple', ['notAnIterator']],
+        ];
+    }
 }

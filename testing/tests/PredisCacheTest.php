@@ -49,8 +49,9 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
         $setValue = null;
         $this->predis
             ->shouldReceive('set')
-            ->with($expectedKey, Mockery::on(function($v) use (&$setValue) {
+            ->with($expectedKey, Mockery::on(function ($v) use (&$setValue) {
                 $setValue = $v;
+
                 return true;
             }));
 
@@ -79,8 +80,9 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
         $setValue = null;
         $this->predis
             ->shouldReceive('setex')
-            ->with($expectedKey, 60, Mockery::on(function($v) use (&$setValue) {
+            ->with($expectedKey, 60, Mockery::on(function ($v) use (&$setValue) {
                 $setValue = $v;
+
                 return true;
             }));
 
@@ -130,8 +132,9 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
 
         $this->predis
             ->shouldReceive('setex')
-            ->with($expectedKey, 60, Mockery::on(function($v) use (&$setValue) {
+            ->with($expectedKey, 60, Mockery::on(function ($v) use (&$setValue) {
                 $setValue = $v;
+
                 return true;
             }));
 
@@ -151,8 +154,9 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
         $setValue = null;
         $this->predis
             ->shouldReceive('setex')
-            ->with($expectedKey, 60, Mockery::on(function($v) use (&$setValue) {
+            ->with($expectedKey, 60, Mockery::on(function ($v) use (&$setValue) {
                 $setValue = $v;
+
                 return true;
             }));
 
@@ -233,8 +237,9 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
         $setValue = null;
         $this->predis
             ->shouldReceive('setex')
-            ->with($expectedKey, 60, Mockery::on(function($v) use (&$setValue) {
+            ->with($expectedKey, 60, Mockery::on(function ($v) use (&$setValue) {
                 $setValue = $v;
+
                 return true;
             }));
 
@@ -248,7 +253,7 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteMultipleCallsDeleteWithAllExpectedValues()
     {
-        $inputValue = ['foo' , 'bar'];
+        $inputValue = ['foo', 'bar'];
         $expectedKeys = [
             $expectedKey = sprintf('mcp-cache-%s:foo:1', CacheInterface::VERSION),
             $expectedKey = sprintf('mcp-cache-%s:bar:1', CacheInterface::VERSION)
@@ -259,8 +264,8 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
 
         foreach ($expectedKeys as $expectedKey) {
             $this->predis
-            ->shouldReceive('del')
-            ->with($expectedKey);
+                ->shouldReceive('del')
+                ->with($expectedKey);
         }
 
         $cache = new PredisCache($this->predis);
@@ -291,6 +296,28 @@ class PredisCacheTest extends PHPUnit_Framework_TestCase
             ['setMultiple', [[$invalidKey => 'foo']]],
             ['deleteMultiple', [[$invalidKey]]],
             ['has', [$invalidKey]],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidIterableProvider
+     */
+    public function testInvalidIterableThrowsException($method, $args)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $mock = Mockery::mock(Client::class)->shouldIgnoreMissing();
+
+        $cache = new PredisCache($mock);
+        $cache->$method(...$args);
+    }
+
+    public function invalidIterableProvider()
+    {
+        // returns [$method, []ofMethodArguments]
+        return [
+            ['getMultiple', ['notAnIterator']],
+            ['setMultiple', ['notAnIterator']],
+            ['deleteMultiple', ['notAnIterator']],
         ];
     }
 }

@@ -18,5 +18,6 @@ class CachingStub
         cache as public;
         getFromCache as public;
         setToCache as public;
+        clearCache as public;
     }
 }

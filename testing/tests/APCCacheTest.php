@@ -79,6 +79,13 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(null, $cache->get('a'));
     }
 
+    public function testGetNotExistReturnsDefault()
+    {
+        $cache = new APCCache($this->clock);
+
+        $this->assertEquals('default', $cache->get('a', 'default'));
+    }
+
     public function testGetImmediateExpire()
     {
         $cache = new APCCache($this->clock);
@@ -92,6 +99,20 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(true, $out);
 
         $this->assertEquals(null, $cache->get('a'));
+    }
+
+    public function testGetAfterDelete()
+    {
+        $cache = new APCCache($this->clock);
+
+        // Set data with long expiry
+        $out = $cache->set('x', 'y');
+        $this->assertSame('y', $cache->get('x'));
+
+        $out = $cache->delete('x');
+        $this->assertEquals(true, $out);
+
+        $this->assertEquals(null, $cache->get('x'));
     }
 
     /**
@@ -199,5 +220,80 @@ class APCCacheTest extends PHPUnit_Framework_TestCase
 
         $cache = new APCCache;
         $cache->setPrecomputeDelta('derp');
+    }
+
+    public function testSetMultipleAndMultiGetAndMultiDeleteReturnsAndHasDefaultForUnsetKeys()
+    {
+        $defaultValue = 'defaultValue';
+
+        $cacheData = ['foo' => 'storedValue', 'bar' => null];
+
+        $cache = new APCCache($this->clock);
+
+        $cache->setMultiple($cacheData);
+        $response = $cache->getMultiple(['foo', 'bar'], $defaultValue);
+        $this->assertEquals(['foo' => 'storedValue', 'bar' => $defaultValue], $response);
+        $cache->deleteMultiple(['foo', 'bar']);
+        $this->assertEquals(['foo' => null, 'bar' => null], $cache->getMultiple(['foo', 'bar']));
+    }
+
+    public function testHasReturnsBooleanExpected()
+    {
+        $cache = new APCCache($this->clock);
+
+        $cache->set('x', 'y', 10);
+        $out = $cache->has('x');
+        $this->assertTrue($out);
+        $this->assertTrue(is_bool($out));
+    }
+
+    /**
+     * @dataProvider invalidKeyDataProvider
+     */
+    public function testInvalidArgumentExceptionThrownOnRequiredMethods($method, $args)
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $cache = new APCCache($this->clock);
+
+        $cache->$method(...$args);
+    }
+
+    public function invalidKeyDataProvider()
+    {
+        $invalidKey = '{}()/\\:';
+
+        // returns [$method, []ofMethodArguments]
+        return [
+            ['get', [$invalidKey]],
+            ['set', [$invalidKey, 'foo']],
+            ['delete', [$invalidKey]],
+            ['getMultiple', [[$invalidKey]]],
+            ['setMultiple', [[$invalidKey => 'foo']]],
+            ['deleteMultiple', [[$invalidKey]]],
+            ['has', [$invalidKey]],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidIterableProvider
+     */
+    public function testInvalidIterableThrowsException($method, $args)
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $cache = new APCCache($this->clock);
+
+        $cache->$method(...$args);
+    }
+
+    public function invalidIterableProvider()
+    {
+        // returns [$method, []ofMethodArguments]
+        return [
+            ['getMultiple', ['notAnIterator']],
+            ['setMultiple', ['notAnIterator']],
+            ['deleteMultiple', ['notAnIterator']],
+        ];
     }
 }

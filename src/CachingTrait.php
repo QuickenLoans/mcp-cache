@@ -105,7 +105,8 @@ trait CachingTrait
      */
     public function clearCache()
     {
-        if (!$cache = $this->cache() instanceof PSR16CacheInterface) {
+        $cache = $this->cache();
+        if (!$cache instanceof PSR16CacheInterface) {
             return;
         }
 

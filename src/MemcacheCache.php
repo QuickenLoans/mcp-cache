@@ -115,18 +115,10 @@ class MemcacheCache implements CacheInterface, PSR16CacheInterface
     public function getMultiple($keys, $default = null)
     {
         $keys = $this->validateIterable($keys);
-        array_map(function($key) {
-            $this->validateKey($key);
-        }, $keys);
 
         $responses = [];
         foreach ($keys as $key) {
-            $cached = $this->cache->get($key);
-
-            if (!$cached) {
-                $cached = $default;
-            }
-
+            $cached = $this->get($key, $default);
             $responses[$key] = $cached;
         }
 
