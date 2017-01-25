@@ -7,6 +7,8 @@
 
 namespace QL\MCP\Cache;
 
+use Psr\SimpleCache\CacheInterface as PSR16CacheInterface;
+
 /**
  * Provide convenience methods and wrappers for caching in repositories.
  *
@@ -21,7 +23,7 @@ namespace QL\MCP\Cache;
 trait CachingTrait
 {
     /**
-     * @var CacheInterface|null
+     * @var PSR16CacheInterface|CacheInterface|null
      */
     private $cache;
 
@@ -31,7 +33,7 @@ trait CachingTrait
     private $cacheTTL;
 
     /**
-     * @return CacheInterface|null
+     * @return PSR16CacheInterface|CacheInterface|null
      */
     private function cache()
     {
@@ -43,13 +45,13 @@ trait CachingTrait
      *
      * @return mixed|null
      */
-    private function getFromCache($key)
+    private function getFromCache($key, $default = null)
     {
         if (!$this->cache()) {
             return null;
         }
 
-        return $this->cache()->get($key);
+        return $this->cache()->get($key, $default);
     }
 
     /**
@@ -80,8 +82,11 @@ trait CachingTrait
      *
      * @return null
      */
-    public function setCache(CacheInterface $cache)
+    public function setCache($cache)
     {
+        if (!$cache instanceof CacheInterface && !$cache instanceof PSR16CacheInterface) {
+            throw new InvalidArgumentException('You must pass a PSR16 or MCP legacy cache Object');
+        }
         $this->cache = $cache;
     }
 
@@ -93,5 +98,17 @@ trait CachingTrait
     public function setCacheTTL($ttl)
     {
         $this->cacheTTL = (int) $ttl;
+    }
+
+    /**
+     * Clears the cache if the cache is not a PSR16CacheInterface it then will do nothing and return silently
+     */
+    public function clearCache()
+    {
+        if (!$cache = $this->cache() instanceof PSR16CacheInterface) {
+            return;
+        }
+
+        $cache->clear();
     }
 }

@@ -61,7 +61,7 @@ class CachingTraitTest extends PHPUnit_Framework_TestCase
     {
         $this->cache
             ->shouldReceive('get')
-            ->with('key')
+            ->with('key', null)
             ->once()
             ->andReturn('data2');
 

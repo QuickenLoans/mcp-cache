@@ -3,6 +3,24 @@ All notable changes to this project will be documented in this file. See [keepac
 
 This package follows [semver](http://semver.org/) versioning.
 
+## [3.1.0] - 2017-1-23
+### Added
+- All cache implementations now implement [PSR16](http://www.php-fig.org/psr/psr-16/)
+    - This adds the following methods `delete`, `clear`, `getMultiple`, `setMultiple`, `deleteMultiple`, and `has`
+    - `Cache::get` now has an optional second argument `$default` which sets the return value in case of a cache miss
+    - Cache TTL's can now be `null`, `int`, `DateInterval`, or [TimeInterval](https://github.com/quickenloans-mcp/mcp-common#timeinterval)
+        - [TimeInterval](https://github.com/quickenloans-mcp/mcp-common#timeinterval) is not part of the PSR16 spec but we will support it here
+          to encourage it's use and keep the expectation of interoperability in [MCP](https://github.com/quickenloans-mcp) packages of [MCP Common's](https://github.com/quickenloans-mcp/mcp-common)
+          datatypes.
+    - New `InvalidArgumentException` as required by [PSR16's InvalidArgumentException](http://www.php-fig.org/psr/psr-16/#invalidargumentexception)
+    - Added `CacheInputValidationTrait` which is used by the cache implementations to detect invalid keys
+- **[BC WARNING]** According to [PSR16](http://www.php-fig.org/psr/psr-16/) `{}()/\@:` are invalid cache key characters
+    - When the cache package is updated any cache keys using the before mentioned values will throw `Psr\SimpleCache\InvalidArgumentExceptions`. 
+    - Cache Key delimiters now default to `.` since `:` is now an invalid key character
+        - When the cache package is updated all old keys using the default delimiter will be invalid.
+### Changed
+- Predis Clients now append a "CacheGeneration" number to the salted keys to provide simple cache invalidation with `PredisHandler::clear`
+
 ## [3.0.0] - 2016-11-21
 
 ### Added

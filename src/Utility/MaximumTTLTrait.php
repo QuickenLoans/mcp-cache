@@ -6,6 +6,7 @@
  */
 
 namespace QL\MCP\Cache\Utility;
+use QL\MCP\Common\Time\TimeInterval;
 
 /**
  * Allow a cacher to specify a maximum TTL for cached data.
@@ -40,6 +41,14 @@ trait MaximumTTLTrait
      */
     private function determineTTL($ttl)
     {
+        if ($ttl instanceof TimeInterval) {
+            $ttl = (int) $ttl->format('%s');
+        }
+
+        if ($ttl instanceof \DateInterval) {
+            $ttl = (int) $ttl->format('%s');
+        }
+
         // if no max is set, use the user provided value
         if (!$this->maximumTTL) {
             return $ttl;

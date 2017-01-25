@@ -9,10 +9,12 @@ namespace QL\MCP\Cache;
 
 /**
  * @api
+ *
+ * @deprecated
  */
 interface CacheInterface
 {
-    const VERSION = '3.0.0';
+    const VERSION = '3.1.0';
 
     /**
      * @param string $key
