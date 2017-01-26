@@ -26,7 +26,7 @@ trait KeySaltingTrait
      */
     private function salted($key, $suffix = null)
     {
-        $delimiter = ':';
+        $delimiter = '.';
         if (defined('static::DELIMITER')) {
             $delimiter = static::DELIMITER;
         }

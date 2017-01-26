@@ -47,7 +47,7 @@ class MemcachedCache implements CacheInterface, PSR16CacheInterface
      * @var string
      */
     const PREFIX = 'mcp-cache-' . CacheInterface::VERSION;
-    const DELIMITER = ':';
+    const DELIMITER = '.';
 
     /**
      * @var Memcached

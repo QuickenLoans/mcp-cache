@@ -59,12 +59,12 @@ class MemcachedCacheTest extends PHPUnit_Framework_TestCase
         $actual = $cache->get('derp');
 
         $expectedError1 = ['error', 'Memcached Error : SET : RES_NO_SERVERS', [
-            'cacheKey' => sprintf('mcp-cache-%s:derp:suffix', CacheInterface::VERSION),
+            'cacheKey' => sprintf('mcp-cache-%s.derp.suffix', CacheInterface::VERSION),
             'memcacheError' => 'RES_NO_SERVERS'
         ]];
 
         $expectedError2 = ['error', 'Memcached Error : GET : RES_NO_SERVERS', [
-            'cacheKey' => sprintf('mcp-cache-%s:derp:suffix', CacheInterface::VERSION),
+            'cacheKey' => sprintf('mcp-cache-%s.derp.suffix', CacheInterface::VERSION),
             'memcacheError' => 'RES_NO_SERVERS'
         ]];
 
@@ -87,12 +87,12 @@ class MemcachedCacheTest extends PHPUnit_Framework_TestCase
         $actual = $cache->get('derp');
 
         $expectedError1 = ['warning', 'Memcached Error : SET : RES_SERVER_TEMPORARILY_DISABLED', [
-            'cacheKey' => sprintf('mcp-cache-%s:derp', CacheInterface::VERSION),
+            'cacheKey' => sprintf('mcp-cache-%s.derp', CacheInterface::VERSION),
             'memcacheError' => 'RES_SERVER_TEMPORARILY_DISABLED'
         ]];
 
         $expectedError2 = ['warning', 'Memcached Error : GET : RES_SERVER_TEMPORARILY_DISABLED', [
-            'cacheKey' => sprintf('mcp-cache-%s:derp', CacheInterface::VERSION),
+            'cacheKey' => sprintf('mcp-cache-%s.derp', CacheInterface::VERSION),
             'memcacheError' => 'RES_SERVER_TEMPORARILY_DISABLED'
         ]];
 

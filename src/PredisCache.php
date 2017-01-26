@@ -29,7 +29,7 @@ class PredisCache implements PSR16CacheInterface, MCPCacheInterface
      * @var string
      */
     const PREFIX = 'mcp-cache-' . CacheInterface::VERSION;
-    const DELIMITER = ':';
+    const DELIMITER = '.';
 
     /**
      * @var client
