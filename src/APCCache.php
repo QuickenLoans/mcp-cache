@@ -11,7 +11,7 @@ use QL\MCP\Cache\Item\Item;
 use QL\MCP\Cache\Utility\KeySaltingTrait;
 use QL\MCP\Cache\Utility\MaximumTTLTrait;
 use QL\MCP\Cache\Utility\StampedeProtectionTrait;
-use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Clock;
 
 /**
  * APC In-Memory Cache Implementation

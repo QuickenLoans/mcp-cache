@@ -7,10 +7,9 @@
 
 namespace QL\MCP\Cache\Item;
 
-use QL\MCP\Cache\Exception as CacheException;
-use QL\MCP\Common\Time\Clock;
-use QL\MCP\Common\Time\TimePoint;
 use PHPUnit_Framework_TestCase;
+use QL\MCP\Cache\Exception as CacheException;
+use QL\MCP\Common\Clock;
 
 class ItemTest extends PHPUnit_Framework_TestCase
 {

@@ -8,7 +8,7 @@
 namespace QL\MCP\Cache;
 
 use QL\MCP\Cache\Exception as CacheException;
-use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Clock;
 use PHPUnit_Framework_TestCase;
 
 class APCCacheTest extends PHPUnit_Framework_TestCase
