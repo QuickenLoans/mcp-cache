@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file. See [keepac
 
 This package follows [semver](http://semver.org/) versioning.
 
+## [3.1.0] - 2019-04-13
+
+### Changed
+- `ql/mcp-common` >= 2.0 is now required.
+- PHP >= 7.1 is now required.
+
+### Removed
+- `MemcacheCache` has been removed. `ext-memcache` is not PHP 7 compatible and this library now requires PHP 7.1 or higher.
+
 ## [3.0.0] - 2016-11-21
 
 ### Added

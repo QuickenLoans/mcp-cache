@@ -49,13 +49,6 @@ run_tests_steps: &run_tests_steps
             command: 'phpdbg -qrr vendor/bin/phpunit'
         - store_test_results:
             path: '.phpunit/report'
-        - run:
-            name: 'Upload test coverage to Codacy (PHP 7.1 only)'
-            command: |
-                php_version=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')
-                if [ "${php_version}" == "7.1" ] ; then
-                    ./vendor/bin/codacycoverage clover .phpunit/clover.xml
-                fi
 
 workflows:
 
