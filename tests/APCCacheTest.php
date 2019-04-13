@@ -7,11 +7,11 @@
 
 namespace QL\MCP\Cache;
 
+use PHPUnit\Framework\TestCase;
 use QL\MCP\Cache\Exception as CacheException;
 use QL\MCP\Common\Clock;
-use PHPUnit_Framework_TestCase;
 
-class APCCacheTest extends PHPUnit_Framework_TestCase
+class APCCacheTest extends TestCase
 {
     const STAMPEDE_RUNS = 1000;
 

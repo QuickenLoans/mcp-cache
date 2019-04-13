@@ -57,7 +57,7 @@ trait CachingTrait
      * @param mixed $value
      * @param mixed $ttl
      *
-     * @return null
+     * @return void
      */
     private function setToCache($key, $value, $ttl = 0)
     {
@@ -72,7 +72,7 @@ trait CachingTrait
             array_push($params, $this->cacheTTL);
         }
 
-        return call_user_func_array([$this->cache(), 'set'], $params);
+        call_user_func_array([$this->cache(), 'set'], $params);
     }
 
     /**

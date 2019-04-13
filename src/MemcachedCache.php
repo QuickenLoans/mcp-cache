@@ -7,24 +7,25 @@
 
 namespace QL\MCP\Cache;
 
-use QL\MCP\Cache\Utility\KeySaltingTrait;
-use QL\MCP\Cache\Utility\MaximumTTLTrait;
 use Memcached;
 use Psr\Log\LoggerInterface;
+use QL\MCP\Cache\Utility\KeySaltingTrait;
+use QL\MCP\Cache\Utility\MaximumTTLTrait;
 
 /**
  * PHP.NET Docs:
+ *
  * @see http://php.net/manual/en/book.memcached.php
  *
  * GitHub Source:
+ *
  * @see https://github.com/php-memcached-dev/php-memcached
  * @see https://github.com/awslabs/aws-elasticache-cluster-client-memcached-for-php
  *
  * ElastiCache Docs:
+ *
  * @see http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/Appendix.PHPAutoDiscoverySetup.html
  * @see http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/AutoDiscovery.Using.html
- *
- * @internal
  */
 class MemcachedCache implements CacheInterface
 {
@@ -110,7 +111,7 @@ class MemcachedCache implements CacheInterface
         'RES_AUTH_PROBLEM' => 40,
         'RES_AUTH_FAILURE' => 41,
         'RES_AUTH_CONTINUE' => 42,
-        'RES_PAYLOAD_FAILURE' => -1001
+        'RES_PAYLOAD_FAILURE' => -1001,
     ];
 
     /**
@@ -151,7 +152,7 @@ class MemcachedCache implements CacheInterface
         if ($code === Memcached::RES_SUCCESS) {
             return $cached;
 
-        } else if ($code !== Memcached::RES_NOTFOUND) {
+        } elseif ($code !== Memcached::RES_NOTFOUND) {
             $this->sendAlert('get', $key, $code);
         }
 
@@ -190,7 +191,7 @@ class MemcachedCache implements CacheInterface
     /**
      * @param int $code
      *
-     * @return string
+     * @return string|int
      */
     private function getHumanResultCode($code)
     {
@@ -208,7 +209,7 @@ class MemcachedCache implements CacheInterface
     /**
      * @param string $type
      * @param string $key
-     * @param string $code
+     * @param mixed $code
      *
      * @return void
      */
@@ -226,7 +227,7 @@ class MemcachedCache implements CacheInterface
 
         $this->logger->$priority($msg, [
             'cacheKey' => $key,
-            'memcacheError' => $code
+            'memcacheError' => $code,
         ]);
     }
 }

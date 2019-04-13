@@ -7,13 +7,10 @@
 
 namespace QL\MCP\Cache;
 
+use Predis\Client;
 use QL\MCP\Cache\Utility\KeySaltingTrait;
 use QL\MCP\Cache\Utility\MaximumTTLTrait;
-use Predis\Client;
 
-/**
- * @internal
- */
 class PredisCache implements CacheInterface
 {
     use KeySaltingTrait;
@@ -28,7 +25,7 @@ class PredisCache implements CacheInterface
     const DELIMITER = ':';
 
     /**
-     * @var client
+     * @var Client
      */
     private $predis;
 
@@ -67,9 +64,12 @@ class PredisCache implements CacheInterface
         // every response should be a php serialized string.
         // values not matching this pattern will explode.
         // missing data should return null, which is not unserialized.
-        $value = (is_string($raw)) ? unserialize($raw) : $raw;
 
-        return $value;
+        if (is_string($raw)) {
+            return unserialize($raw);
+        }
+
+        return $raw;
     }
 
     /**

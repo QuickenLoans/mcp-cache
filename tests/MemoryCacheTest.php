@@ -7,10 +7,10 @@
 
 namespace QL\MCP\Cache;
 
+use PHPUnit\Framework\TestCase;
 use QL\MCP\Cache\Exception as CacheException;
-use PHPUnit_Framework_TestCase;
 
-class MemoryCacheTest extends PHPUnit_Framework_TestCase
+class MemoryCacheTest extends TestCase
 {
     public function testSettingAKeyAndGetSameKeyResultsInOriginalValue()
     {

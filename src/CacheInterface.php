@@ -28,7 +28,7 @@ interface CacheInterface
      * @param mixed $value Anything not a resource
      * @param int $ttl How long the data should live, in seconds
      *
-     * @return boolean
+     * @return bool
      */
     public function set($key, $value, $ttl = 0);
 }

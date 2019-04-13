@@ -7,11 +7,11 @@
 
 namespace QL\MCP\Cache;
 
-use PHPUnit_Framework_TestCase;
-use QL\MCP\Cache\Testing\CachingStub;
 use Mockery;
+use PHPUnit\Framework\TestCase;
+use QL\MCP\Cache\Testing\CachingStub;
 
-class CachingTraitTest extends PHPUnit_Framework_TestCase
+class CachingTraitTest extends TestCase
 {
     public $cache;
 
