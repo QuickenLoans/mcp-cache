@@ -10,21 +10,28 @@
         { "name": "Steve Kluck", "email": "steve@kluck.engineering" }
     ],
     "archive": {
-        "exclude": [ "/phpunit.xml.dist", "/testing", "/src/Testing" ]
+        "exclude": [ "/phpunit.xml.dist", "/tests", "/src/Testing" ]
     },
     "autoload": {
         "psr-4": { "QL\\MCP\\Cache\\": "src" }
     },
 
     "require": {
-        "php": "^7.1",
-        "ql/mcp-common": "^2.0"
+        "php": "~7.1",
+        "ql/mcp-common": "~2.0"
     },
 
     "require-dev": {
-        "mockery/mockery": "*",
-        "phpunit/phpunit": "~5.0",
-        "phpunit/php-invoker": "*",
+        "mockery/mockery": "~1.0",
+        "phpunit/phpunit": "~6.0",
+        "codacy/coverage": "~1.4",
+
+        "overtrue/phplint": "~1.0",
+        "phpstan/phpstan": "~0.9",
+        "squizlabs/php_codesniffer": "~3.0",
+
+        "slevomat/coding-standard": "~4.0",
+
         "predis/predis": "*",
         "psr/log": "*",
         "ext-apcu": "*"
