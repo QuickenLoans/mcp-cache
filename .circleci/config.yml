@@ -115,6 +115,9 @@ jobs:
         <<: *php71_defaults
         steps:
             - *attach_workspace
+            - *install_apcu
+            - *install_memcached
+
             - run:
                 name: 'Run static analysis'
                 command: |

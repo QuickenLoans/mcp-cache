@@ -64,9 +64,12 @@ class PredisCache implements CacheInterface
         // every response should be a php serialized string.
         // values not matching this pattern will explode.
         // missing data should return null, which is not unserialized.
-        $value = (is_string($raw)) ? unserialize($raw) : $raw;
 
-        return $value;
+        if (is_string($raw)) {
+            return unserialize($raw);
+        }
+
+        return $raw;
     }
 
     /**
