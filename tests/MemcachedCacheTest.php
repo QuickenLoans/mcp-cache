@@ -7,9 +7,9 @@
 
 namespace QL\MCP\Cache;
 
-use QL\MCP\Cache\Testing\MemoryLogger;
 use Memcached;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
+use QL\MCP\Cache\Testing\MemoryLogger;
 
 /**
  * PECL Memcached 2.2.x cannot be tested without errors.
@@ -17,7 +17,7 @@ use PHPUnit_Framework_TestCase;
  * @see https://github.com/php-memcached-dev/php-memcached/issues/126
  * @see https://bugs.php.net/bug.php?id=66331
  */
-class MemcachedCacheTest extends PHPUnit_Framework_TestCase
+class MemcachedCacheTest extends TestCase
 {
     public function setUp()
     {

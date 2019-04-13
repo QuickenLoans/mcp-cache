@@ -9,9 +9,9 @@ namespace QL\MCP\Cache;
 
 use Memcache;
 use Mockery;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class MemcacheCacheTest extends PHPUnit_Framework_TestCase
+class MemcacheCacheTest extends TestCase
 {
     public function setUp()
     {

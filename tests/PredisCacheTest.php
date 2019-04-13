@@ -10,10 +10,10 @@ namespace QL\MCP\Cache;
 use DateTime;
 use DateTimeZone;
 use Mockery;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Predis\Client;
 
-class PredisCacheTest extends PHPUnit_Framework_TestCase
+class PredisCacheTest extends TestCase
 {
     public $predis;
 

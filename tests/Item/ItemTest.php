@@ -7,11 +7,11 @@
 
 namespace QL\MCP\Cache\Item;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use QL\MCP\Cache\Exception as CacheException;
 use QL\MCP\Common\Clock;
 
-class ItemTest extends PHPUnit_Framework_TestCase
+class ItemTest extends TestCase
 {
     public $clock;
 
