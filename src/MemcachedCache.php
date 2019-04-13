@@ -191,7 +191,7 @@ class MemcachedCache implements CacheInterface
     /**
      * @param int $code
      *
-     * @return string
+     * @return string|int
      */
     private function getHumanResultCode($code)
     {
@@ -209,7 +209,7 @@ class MemcachedCache implements CacheInterface
     /**
      * @param string $type
      * @param string $key
-     * @param string $code
+     * @param mixed $code
      *
      * @return void
      */
