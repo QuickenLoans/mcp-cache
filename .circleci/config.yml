@@ -24,9 +24,26 @@ persist_workspace: &persist_workspace
         root: '.'
         paths: [ '.' ]
 
+install_apcu: &install_apcu
+    run:
+        name: 'Install ext-apcu'
+        command: |
+            sudo pecl install apcu
+            sudo docker-php-ext-enable apcu
+
+install_memcached: &install_memcached
+    run:
+        name: 'Install ext-memached'
+        command: |
+            sudo -s apt-get install libmemcached-dev
+            sudo pecl install memcached <<< ''
+            sudo docker-php-ext-enable memcached
+
 run_tests_steps: &run_tests_steps
     steps:
         - *attach_workspace
+        - *install_apcu
+        - *install_memcached
         - run:
             name: 'Run unit tests'
             command: 'phpdbg -qrr vendor/bin/phpunit'
@@ -79,6 +96,9 @@ jobs:
 
             - restore_cache:
                 keys: [ 'v2-php-deps-{{ checksum "composer.json" }}', 'v2-php-deps' ]
+
+            - *install_apcu
+            - *install_memcached
 
             - run:
                 name: 'Install PHP dependencies'

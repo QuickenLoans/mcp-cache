@@ -1,7 +1,6 @@
 # MCP Cache
 
-[![Build Status](https://travis-ci.org/quickenloans-mcp/mcp-cache.png)](https://travis-ci.org/quickenloans-mcp/mcp-cache)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/quickenloans-mcp/mcp-cache/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/quickenloans-mcp/mcp-cache/?branch=master)
+[![CircleCI](https://circleci.com/gh/QuickenLoans/mcp-cache.svg?style=shield)](https://circleci.com/gh/QuickenLoans/mcp-cache)
 [![Latest Stable Version](https://poser.pugx.org/ql/mcp-cache/version)](https://packagist.org/packages/ql/mcp-cache)
 [![License](https://poser.pugx.org/ql/mcp-cache/license)](https://packagist.org/packages/ql/mcp-cache)
 
