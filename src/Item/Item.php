@@ -86,7 +86,7 @@ class Item
     /**
      * @param TimePoint $now
      *
-     * @return boolean
+     * @return bool
      */
     private function isExpired(TimePoint $now)
     {
@@ -102,9 +102,9 @@ class Item
      * Validate if data is cacheable.
      *
      * @param mixed $value
-     * 
+     *
      * @throws InvalidArgumentException
-     * 
+     *
      * @return null
      */
     private function validateCacheability($value)

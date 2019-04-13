@@ -111,7 +111,7 @@ class MemcachedCache implements CacheInterface
         'RES_AUTH_PROBLEM' => 40,
         'RES_AUTH_FAILURE' => 41,
         'RES_AUTH_CONTINUE' => 42,
-        'RES_PAYLOAD_FAILURE' => -1001
+        'RES_PAYLOAD_FAILURE' => -1001,
     ];
 
     /**

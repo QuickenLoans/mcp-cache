@@ -138,6 +138,7 @@ jobs:
                     vendor/bin/phpcs \
                     --colors \
                     --runtime-set ignore_warnings_on_exit true \
+                    -s \
                     src
 
     unit_tests_71:
