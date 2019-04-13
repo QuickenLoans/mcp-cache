@@ -7,6 +7,7 @@
 
 namespace QL\MCP\Cache\Item;
 
+use InvalidArgumentException;
 use QL\MCP\Cache\Exception;
 use QL\MCP\Common\Time\TimePoint;
 
@@ -101,7 +102,9 @@ class Item
      * Validate if data is cacheable.
      *
      * @param mixed $value
+     * 
      * @throws InvalidArgumentException
+     * 
      * @return null
      */
     private function validateCacheability($value)

@@ -7,24 +7,25 @@
 
 namespace QL\MCP\Cache;
 
-use QL\MCP\Cache\Utility\KeySaltingTrait;
-use QL\MCP\Cache\Utility\MaximumTTLTrait;
 use Memcached;
 use Psr\Log\LoggerInterface;
+use QL\MCP\Cache\Utility\KeySaltingTrait;
+use QL\MCP\Cache\Utility\MaximumTTLTrait;
 
 /**
  * PHP.NET Docs:
+ *
  * @see http://php.net/manual/en/book.memcached.php
  *
  * GitHub Source:
+ *
  * @see https://github.com/php-memcached-dev/php-memcached
  * @see https://github.com/awslabs/aws-elasticache-cluster-client-memcached-for-php
  *
  * ElastiCache Docs:
+ *
  * @see http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/Appendix.PHPAutoDiscoverySetup.html
  * @see http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/AutoDiscovery.Using.html
- *
- * @internal
  */
 class MemcachedCache implements CacheInterface
 {
@@ -151,7 +152,7 @@ class MemcachedCache implements CacheInterface
         if ($code === Memcached::RES_SUCCESS) {
             return $cached;
 
-        } else if ($code !== Memcached::RES_NOTFOUND) {
+        } elseif ($code !== Memcached::RES_NOTFOUND) {
             $this->sendAlert('get', $key, $code);
         }
 
@@ -226,7 +227,7 @@ class MemcachedCache implements CacheInterface
 
         $this->logger->$priority($msg, [
             'cacheKey' => $key,
-            'memcacheError' => $code
+            'memcacheError' => $code,
         ]);
     }
 }

@@ -20,6 +20,7 @@ trait KeySaltingTrait
      *
      * @param string $key
      * @param string|null $suffix
+     *
      * @return string
      */
     private function salted($key, $suffix = null)

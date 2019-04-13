@@ -9,9 +9,6 @@ namespace QL\MCP\Cache;
 
 use QL\MCP\Cache\Item\Item;
 
-/**
- * @internal
- */
 class MemoryCache implements CacheInterface
 {
     /**

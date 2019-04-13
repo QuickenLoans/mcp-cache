@@ -7,13 +7,10 @@
 
 namespace QL\MCP\Cache;
 
+use Predis\Client;
 use QL\MCP\Cache\Utility\KeySaltingTrait;
 use QL\MCP\Cache\Utility\MaximumTTLTrait;
-use Predis\Client;
 
-/**
- * @internal
- */
 class PredisCache implements CacheInterface
 {
     use KeySaltingTrait;
@@ -28,7 +25,7 @@ class PredisCache implements CacheInterface
     const DELIMITER = ':';
 
     /**
-     * @var client
+     * @var Client
      */
     private $predis;
 

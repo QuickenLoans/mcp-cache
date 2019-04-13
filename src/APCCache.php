@@ -42,6 +42,11 @@ class APCCache implements CacheInterface
     private $clock;
 
     /**
+     * @var string|null
+     */
+    private $suffix;
+
+    /**
      * An optional suffix can be provided which will be appended to the key
      * used to store and retrieve data. This can be used to throw away cached
      * data with a code push or other configuration change.
@@ -49,7 +54,7 @@ class APCCache implements CacheInterface
      * Alternatively, if multiple applications are deployed to the same server,
      * cached data MUST be namespaced to avoid collision.
      *
-     * @param Clock $clock
+     * @param Clock|null $clock
      * @param string|null $suffix
      */
     public function __construct(Clock $clock = null, $suffix = null)
